@@ -1,0 +1,49 @@
+# Deploy workflow — runs scripts/deploy-content.sh (Phase 6) on every push
+# to main. Deliberately unattended, no approval gate — matches the old
+# Jenkinsfile.deploy's design: content changes are low-risk and frequent,
+# infra changes (infra.yml) are the ones that need a human to approve.
+#
+# This workflow does NOT reimplement the deploy logic — it sets three
+# environment variables and calls the exact same script used manually in
+# Phase 6, so there is one implementation of "how a deploy happens," not two.
+
+name: Deploy Content
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "public/**"
+      - "scripts/deploy-content.sh"
+  workflow_dispatch: # lets you trigger it manually too, e.g. to re-sync
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      # Setting these here is what lets deploy-content.sh skip its own
+      # `terraform output` lookup (see the script's own comments) — this
+      # role (Phase 7.1c) deliberately cannot read the Terraform state
+      # bucket, so the script must never fall back to that lookup here.
+      SITE_BUCKET: ${{ vars.SITE_BUCKET }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+      SITE_DOMAIN: ${{ vars.SITE_DOMAIN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Sanity check
+        run: |
+          test -f public/index.html || { echo "public/index.html not found"; exit 1; }
+          chmod +x scripts/deploy-content.sh
+
+      - name: Deploy
+        run: ./scripts/deploy-content.sh

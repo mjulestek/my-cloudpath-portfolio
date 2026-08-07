@@ -2,7 +2,7 @@
 #
 # Content deploy — render __SITE_DOMAIN__ -> sync to S3 -> invalidate
 # CloudFront. This is the SINGLE implementation of that logic in the repo:
-# jenkins/Jenkinsfile.deploy calls this same script rather than
+# .github/workflows/deploy.yml calls this same script rather than
 # reimplementing it, so there is exactly one place these three steps are
 # defined, not two copies that can silently drift apart.
 #
@@ -10,15 +10,16 @@
 #   1. Manual (you, in a terminal) — SITE_BUCKET / CLOUDFRONT_DISTRIBUTION_ID
 #      / SITE_DOMAIN are not set, so this script reads them live from
 #      Terraform output.
-#   2. Jenkins (jenkins/Jenkinsfile.deploy) — those three are already set as
-#      job parameters/environment variables before this script runs, so it
-#      uses them directly and skips the Terraform lookup entirely. This
-#      matters beyond convenience: the Jenkins deploy credential
-#      (aws-deploy-creds) deliberately has no permission to read the
-#      Terraform state bucket (see docs Phase 7.1b) — if this script always
-#      shelled out to `terraform output`, it would fail under that
-#      credential. Skipping the lookup when the values are already known
-#      keeps the deploy pipeline within its intentionally narrow permissions.
+#   2. GitHub Actions (.github/workflows/deploy.yml) — those three are
+#      already set as environment variables (from repository variables,
+#      see docs Phase 7.5) before this script runs, so it uses them
+#      directly and skips the Terraform lookup entirely. This matters
+#      beyond convenience: the deploy workflow's IAM role
+#      (github-actions-deploy-role) deliberately has no permission to read
+#      the Terraform state bucket (see docs Phase 7.3) — if this script
+#      always shelled out to `terraform output`, it would fail under that
+#      role. Skipping the lookup when the values are already known keeps
+#      the deploy workflow within its intentionally narrow permissions.
 #
 # Run from ANYWHERE — it locates the repo root from its own file location,
 # so `cd`ing into the wrong directory first (e.g. terraform/environments/prod)
@@ -56,7 +57,11 @@ echo
 echo "Rendering public/ -> build/ (substituting __SITE_DOMAIN__)..."
 rm -rf "$BUILD_DIR"
 cp -r "$PUBLIC_DIR" "$BUILD_DIR"
-grep -rl "__SITE_DOMAIN__" "$BUILD_DIR" | xargs -r sed -i "s#__SITE_DOMAIN__#$SITE_DOMAIN#g"
+if grep -rlq "__SITE_DOMAIN__" "$BUILD_DIR" 2>/dev/null; then
+  grep -rl "__SITE_DOMAIN__" "$BUILD_DIR" | xargs -r sed -i "s#__SITE_DOMAIN__#$SITE_DOMAIN#g"
+else
+  echo "No __SITE_DOMAIN__ tokens found in build/ — skipping domain substitution."
+fi
 
 echo "Syncing to s3://$SITE_BUCKET ..."
 aws s3 sync "$BUILD_DIR/" "s3://$SITE_BUCKET" \

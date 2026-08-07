@@ -14,8 +14,8 @@ backend-prod.hcl
 backend-*.hcl
 !backend-prod.hcl.example
 
-# Generated at deploy time (Jenkinsfile.deploy renders public/ -> build/
-# with __SITE_DOMAIN__ substituted) — never commit this
+# Generated at deploy time (deploy.yml / scripts/deploy-content.sh renders
+# public/ -> build/ with __SITE_DOMAIN__ substituted) — never commit this
 /build/
 
 # OS / editor

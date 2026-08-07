@@ -1,8 +1,8 @@
 # Static Site on AWS — S3 + CloudFront + ACM
 
-Stack: Git · GitHub · Jenkins · Terraform · S3 · CloudFront · ACM.
+Stack: Git · GitHub · GitHub Actions · Terraform · S3 · CloudFront · ACM.
 
-Full runbook, in two parts — **Part I: Infrastructure Provisioning** (one-time, produces a live HTTPS site) and **Part II: Deployment & CI/CD** (produces the automated pipeline) — with the reasoning behind every step: **[docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md)**.
+Full runbook, in two parts — **Part I: Infrastructure Provisioning** (one-time, produces a live HTTPS site) and **Part II: Deployment & CI/CD** (GitHub Actions, OIDC-authenticated, no server to run) — with the reasoning behind every step: **[docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md)**.
 
 ## Repo layout
 
@@ -16,9 +16,10 @@ Full runbook, in two parts — **Part I: Infrastructure Provisioning** (one-time
 │   ├── bootstrap/                 # one-time: state bucket only (native S3 locking, no lock table)
 │   └── environments/
 │       └── prod/                  # all resources defined directly here (no module layer)
-├── jenkins/
-│   ├── Jenkinsfile.infra          # terraform plan → approve → apply
-│   └── Jenkinsfile.deploy         # calls scripts/deploy-content.sh under Jenkins credentials
+├── .github/
+│   └── workflows/
+│       ├── infra.yml              # terraform plan → approve (GitHub Environment) → apply
+│       └── deploy.yml             # calls scripts/deploy-content.sh on every push to main
 ├── scripts/
 │   └── deploy-content.sh          # single implementation: render __SITE_DOMAIN__ → s3 sync → cloudfront invalidation
 └── docs/
@@ -28,7 +29,7 @@ Full runbook, in two parts — **Part I: Infrastructure Provisioning** (one-time
 
 ## Before you deploy
 
-Two placeholders in `public/` need your real info — contact email (currently `hello@cloudpath.dev`, in `assets/js/main.js` and `assets/js/navigation.js`) and name/bio/resume content (`index.html`, `about.html`, `resume.html`, `assets/resume.pdf`). Everything else (domain in canonical/OG tags, `robots.txt`, `sitemap.xml`) is templated as `__SITE_DOMAIN__` and filled in automatically by the deploy pipeline — see `docs/DEPLOYMENT_GUIDE.md` Appendix D.
+Two placeholders in `public/` need your real info — contact email (currently `hello@cloudpath.dev`, in `assets/js/main.js` and `assets/js/navigation.js`) and name/bio/resume content (`index.html`, `about.html`, `resume.html`, `assets/resume.pdf`). Everything else (domain in canonical/OG tags, `robots.txt`, `sitemap.xml`) is templated as `__SITE_DOMAIN__` and filled in automatically by the deploy workflow — see `docs/DEPLOYMENT_GUIDE.md` Appendix D.
 
 ## Quickstart
 
@@ -56,12 +57,13 @@ terraform apply
 # Phase 5 — point domain at CloudFront (manual, in Namecheap)
 terraform output cloudfront_domain_name
 
-# Phase 6 — deploy content (works standalone, before Jenkins exists)
+# Phase 6 (optional) — deploy content manually, before Actions exists
 ./scripts/deploy-content.sh
 
 # PART II — DEPLOYMENT & CI/CD
 
-# Phase 7 — wire up Jenkins (site-infra, site-deploy jobs)
+# Phase 7 — set up OIDC trust, IAM roles, repo variables, push the
+# workflow files in .github/workflows/ — no server, no static AWS keys
 ```
 
 See `docs/DEPLOYMENT_GUIDE.md` for the full explanation of each step, troubleshooting, security notes, and teardown.

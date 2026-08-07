@@ -1,0 +1,117 @@
+# Infra workflow — mirrors the discipline of the old Jenkinsfile.infra:
+# always plan, only apply/destroy after a human approves. The approval gate
+# here is GitHub's own "environment protection rule" (Phase 7.4) — a job
+# that targets `environment: production` pauses and waits for a required
+# reviewer before it runs, the same concept as Jenkins's Proceed/Abort step.
+#
+# Manual trigger only (workflow_dispatch) — infra changes should never run
+# automatically on a push, same reasoning as before.
+
+name: Infra (Terraform)
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Terraform action to run"
+        required: true
+        default: "plan"
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
+
+# Required for OIDC — lets this workflow request a short-lived AWS token.
+# No AWS secret is stored anywhere in this repo.
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform/environments/prod
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.10.5" # match your local `terraform version` (Phase 0.2)
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_INFRA_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - run: terraform init -backend-config=backend-prod.hcl
+
+      - run: terraform fmt -check -recursive
+
+      - run: terraform validate
+
+      - run: terraform plan -input=false -out=tfplan
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: terraform/environments/prod/tfplan
+          retention-days: 1
+
+  apply:
+    needs: plan
+    if: ${{ github.event.inputs.action == 'apply' }}
+    runs-on: ubuntu-latest
+    environment: production # <-- this line is the approval gate, see Phase 7.4
+    defaults:
+      run:
+        working-directory: terraform/environments/prod
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.10.5"
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_INFRA_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: terraform/environments/prod
+
+      # Re-running init is required — this is a fresh runner with no state
+      # from the plan job. The downloaded tfplan file guarantees apply runs
+      # against exactly what was reviewed, not a freshly recomputed plan.
+      - run: terraform init -backend-config=backend-prod.hcl
+
+      - run: terraform apply -input=false tfplan
+
+  destroy:
+    needs: plan
+    if: ${{ github.event.inputs.action == 'destroy' }}
+    runs-on: ubuntu-latest
+    environment: production # same approval gate as apply
+    defaults:
+      run:
+        working-directory: terraform/environments/prod
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.10.5"
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_INFRA_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - run: terraform init -backend-config=backend-prod.hcl
+
+      - run: terraform destroy -input=false -auto-approve
