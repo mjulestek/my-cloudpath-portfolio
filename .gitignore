@@ -1,0 +1,25 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+crash.*.log
+.terraform.lock.hcl
+tfplan
+
+# Backend config with real values
+backend-prod.hcl
+backend-*.hcl
+!backend-prod.hcl.example
+
+# Generated at deploy time (Jenkinsfile.deploy renders public/ -> build/
+# with __SITE_DOMAIN__ substituted) — never commit this
+/build/
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/

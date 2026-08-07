@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — Page not found | CloudPath</title>
+<meta name="description" content="This page doesn't exist. Head back to the homepage.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/responsive.css">
+<script>(function(){var s='light';try{s=localStorage.getItem('cp-theme')||'light';}catch(e){}document.documentElement.setAttribute('data-theme',s);window.__cpTheme=s;})();</script>
+</head>
+<body data-page="">
+<div class="route-loader" id="routeLoader"><div class="loader-mark"></div></div>
+<div id="site-header"></div>
+
+<main class="page-enter">
+  <div class="container error-page">
+    <div class="error-code">404</div>
+    <h1 style="margin-top:8px;">This route doesn't resolve.</h1>
+    <p style="max-width:440px;margin:14px 0 32px;">The page you're looking for was moved, renamed, or never deployed. Let's get you back to a known-good state.</p>
+
+    <div class="terminal" style="max-width:560px;width:100%;text-align:left;margin-bottom:36px;">
+      <div class="terminal-bar">
+        <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
+        <span class="terminal-title">alex@cloudpath — infra</span>
+      </div>
+      <div class="terminal-body">
+        <div class="terminal-line"><span class="prompt">$</span> <span class="path">~/infra</span> curl -I https://cloudpath.dev/this-page</div>
+        <div class="terminal-line warn">HTTP/2 404 Not Found</div>
+        <div class="terminal-line"><span class="prompt">$</span> <span class="path">~/infra</span> kubectl get route home</div>
+        <div class="terminal-line ok">home   Ready   cloudpath.dev/   &larr; try this one<span class="terminal-cursor"></span></div>
+      </div>
+    </div>
+
+    <div class="hero-actions" style="justify-content:center;">
+      <a href="index.html" class="btn btn-primary">Back to home</a>
+      <a href="projects.html" class="btn btn-secondary">Browse projects</a>
+    </div>
+  </div>
+</main>
+
+<div id="site-footer"></div>
+<script src="assets/js/navigation.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/search.js"></script>
+</body>
+</html>

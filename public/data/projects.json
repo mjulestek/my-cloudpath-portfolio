@@ -1,0 +1,11 @@
+{
+  "note": "This file mirrors the PROJECTS array in assets/js/projects.js. The live site renders from the embedded JS array (not this file) so the pages work when opened directly via file:// without a server. Once hosted, you can switch projects.js to fetch() this file instead if you prefer a data/markup split.",
+  "projects": [
+    { "id": "eks-platform", "title": "Multi-Tenant EKS Platform", "provider": "AWS", "difficulty": "Advanced", "duration": "4 months", "featured": true, "tags": ["Kubernetes", "Terraform", "ArgoCD", "AWS", "Helm"], "github": "https://github.com/" },
+    { "id": "ci-cd-pipeline", "title": "Zero-Downtime CI/CD for Microservices", "provider": "Multi-cloud", "difficulty": "Intermediate", "duration": "6 weeks", "featured": true, "tags": ["GitHub Actions", "ArgoCD", "Docker", "Kubernetes"], "github": "https://github.com/" },
+    { "id": "observability-stack", "title": "Unified Observability Stack", "provider": "AWS", "difficulty": "Intermediate", "duration": "5 weeks", "featured": true, "tags": ["Prometheus", "Grafana", "Terraform", "AWS"], "github": "https://github.com/" },
+    { "id": "terraform-landing-zone", "title": "Multi-Account AWS Landing Zone", "provider": "AWS", "difficulty": "Advanced", "duration": "3 months", "featured": false, "tags": ["Terraform", "AWS", "Security", "IAM"], "github": "https://github.com/" },
+    { "id": "gcp-data-pipeline", "title": "Event-Driven Data Pipeline on GCP", "provider": "GCP", "difficulty": "Advanced", "duration": "10 weeks", "featured": false, "tags": ["GCP", "Terraform", "Pub/Sub", "BigQuery"], "github": "https://github.com/" },
+    { "id": "ansible-fleet", "title": "Configuration Management for a 300-Node Fleet", "provider": "On-prem", "difficulty": "Beginner", "duration": "3 weeks", "featured": false, "tags": ["Ansible", "Linux", "Security"], "github": "https://github.com/" }
+  ]
+}

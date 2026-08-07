@@ -1,0 +1,11 @@
+aws_region                = "us-east-1"
+site_bucket_name          = "cloudpath-portfolio-site"   # must be globally unique — adjust if taken
+domain_name               = "example.com"                # replace with your real domain
+subject_alternative_names = []                            # start empty — one domain, one validation record.
+                                                            # add ["www.example.com"] later once the apex is live and stable;
+                                                            # each entry here means one more DNS record to validate manually.
+
+# Created manually in ACM console (us-east-1), DNS-validated by hand in
+# Namecheap, status must show ISSUED before you apply. Must cover domain_name
+# and every entry in subject_alternative_names above.
+acm_certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"

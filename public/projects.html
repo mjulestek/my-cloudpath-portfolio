@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — CloudPath</title>
+<meta name="description" content="Cloud and DevOps infrastructure projects — Kubernetes platforms, CI/CD pipelines, observability stacks, and Terraform landing zones.">
+<link rel="canonical" href="https://example.com/projects.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Projects — CloudPath">
+<meta property="og:description" content="Kubernetes platforms, CI/CD pipelines, observability stacks, and Terraform landing zones.">
+<meta property="og:image" content="assets/images/og-cover.svg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/responsive.css">
+<script>(function(){var s='light';try{s=localStorage.getItem('cp-theme')||'light';}catch(e){}document.documentElement.setAttribute('data-theme',s);window.__cpTheme=s;})();</script>
+</head>
+<body data-page="projects">
+<div class="route-loader" id="routeLoader"><div class="loader-mark"></div></div>
+<div id="site-header"></div>
+
+<main class="page-enter">
+  <div class="page-hero container band-soft" style="border-radius:0 0 32px 32px;">
+    <div class="dot-cluster" style="bottom:20px; left:5%;"></div>
+    <div class="breadcrumbs"><a href="index.html">Home</a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg><span>Projects</span></div>
+    <span class="eyebrow">Selected work</span>
+    <h1 style="max-width:700px;">Infrastructure <span class="hl">projects</span>, end to end.</h1>
+    <p style="max-width:600px;font-size:1.05rem;margin-top:16px;">Six projects spanning Kubernetes platforms, CI/CD, observability, multi-account AWS, and configuration management. Each one links to the full architecture writeup.</p>
+  </div>
+
+  <section class="section-tight container">
+    <div class="filter-bar">
+      <div class="filter-chips" id="providerChips">
+        <button class="chip active" data-provider="All">All</button>
+        <button class="chip" data-provider="AWS">AWS</button>
+        <button class="chip" data-provider="GCP">GCP</button>
+        <button class="chip" data-provider="Multi-cloud">Multi-cloud</button>
+        <button class="chip" data-provider="On-prem">On-prem</button>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <span class="mono" id="projectsCount" style="font-size:0.82rem;color:var(--text-tertiary);"></span>
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="projectSearch" placeholder="Search projects…">
+        </div>
+        <select class="sort-select" id="projectSort">
+          <option value="featured">Sort: Featured</option>
+          <option value="title">Sort: Title A–Z</option>
+          <option value="difficulty">Sort: Difficulty</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="project-grid" id="projectsGrid"></div>
+    <div class="empty-state" id="projectsEmpty" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <p>No projects match that search. Try a different keyword or provider.</p>
+    </div>
+  </section>
+
+  <section class="section-tight container">
+    <div class="card band-soft reveal-scale" style="padding:56px;text-align:center;border:none;position:relative;overflow:hidden;">
+      <div class="dot-cluster" style="top:14px; left:7%;"></div>
+      <div class="dot-cluster" style="bottom:14px; right:8%; width:56px; height:56px;"></div>
+      <span class="eyebrow" style="justify-content:center;">How the skills stack up</span>
+      <h2 style="margin-bottom:16px;">Curious what's <span class="hl">behind</span> these?</h2>
+      <p style="max-width:460px;margin:0 auto 28px;">The certifications page shows the training behind the work, and the resume ties it all to specific roles.</p>
+      <div class="hero-actions" style="justify-content:center;margin:0;">
+        <a href="certifications.html" class="btn btn-primary">View certifications</a>
+        <a href="contact.html" class="btn btn-secondary">Get in touch</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<script src="assets/js/navigation.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/projects.js"></script>
+<script src="assets/js/blog.js"></script>
+<script src="assets/js/search.js"></script>
+</body>
+</html>

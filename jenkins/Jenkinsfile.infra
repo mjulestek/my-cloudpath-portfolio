@@ -1,0 +1,109 @@
+// Infra pipeline: runs Terraform against terraform/environments/prod.
+// Triggered manually or on changes under terraform/**. This should run far
+// less often than the content-deploy pipeline.
+//
+// Requires a Jenkins credential 'aws-infra-creds' (AWS Access Key /
+// Secret Key, or better: use an IAM role on the Jenkins agent instead and
+// drop the withCredentials block entirely).
+
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
+    parameters {
+        choice(name: 'ACTION', choices: ['plan', 'apply', 'destroy'], description: 'Terraform action to run')
+    }
+
+    environment {
+        TF_DIR       = "terraform/environments/prod"
+        TF_IN_AUTOMATION = "true"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-infra-creds'
+                ]]) {
+                    dir("${TF_DIR}") {
+                        sh 'terraform init -backend-config=backend-prod.hcl -input=false'
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Validate & Fmt Check') {
+            steps {
+                dir("${TF_DIR}") {
+                    sh 'terraform fmt -check -recursive'
+                    sh 'terraform validate'
+                }
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-infra-creds'
+                ]]) {
+                    dir("${TF_DIR}") {
+                        sh 'terraform plan -input=false -out=tfplan'
+                    }
+                }
+            }
+        }
+
+        stage('Approval') {
+            when { expression { params.ACTION != 'plan' } }
+            steps {
+                input message: "Apply this plan? (action=${params.ACTION})", ok: 'Proceed'
+            }
+        }
+
+        stage('Terraform Apply') {
+            when { expression { params.ACTION == 'apply' } }
+            steps {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-infra-creds'
+                ]]) {
+                    dir("${TF_DIR}") {
+                        sh 'terraform apply -input=false tfplan'
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Destroy') {
+            when { expression { params.ACTION == 'destroy' } }
+            steps {
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-infra-creds'
+                ]]) {
+                    dir("${TF_DIR}") {
+                        sh 'terraform destroy -input=false -auto-approve'
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: "${TF_DIR}/tfplan", allowEmptyArchive: true
+        }
+    }
+}

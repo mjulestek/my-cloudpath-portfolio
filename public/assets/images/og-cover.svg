@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e9e5c"/>
+      <stop offset="100%" stop-color="#f5a623"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#eaf6ee"/>
+  <rect x="80" y="80" width="64" height="64" rx="18" fill="url(#g)"/>
+  <text x="112" y="122" font-family="Arial, sans-serif" font-weight="700" font-size="26" fill="#ffffff" text-anchor="middle">CP</text>
+  <text x="80" y="260" font-family="Arial, sans-serif" font-weight="700" font-size="64" fill="#14181a">CloudPath</text>
+  <text x="80" y="320" font-family="Arial, sans-serif" font-size="30" fill="#5c6b62">DevOps &amp; Cloud Engineer Portfolio</text>
+  <text x="80" y="380" font-family="Arial, sans-serif" font-weight="600" font-size="22" fill="#167a47">AWS · Kubernetes · Terraform · Docker · CI/CD</text>
+</svg>
