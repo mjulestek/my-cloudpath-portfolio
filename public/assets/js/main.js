@@ -106,16 +106,25 @@
     });
   }
 
-  /* ---- Contact form (client-side only, static site) ---- */
+  /* ---- Contact form ----
+     Sends directly to Web3Forms (https://web3forms.com), which forwards the
+     submission straight to an inbox. No server, no database, no AWS
+     resource of any kind — just a POST to their API. Get a free access key
+     at web3forms.com (takes ~30 seconds, no account needed) and paste it
+     below. Free tier: 250 submissions/month, stored 30 days on their side
+     as a backup in case an email bounces. */
+  const WEB3FORMS_ACCESS_KEY = 'bb56822c-f948-4c2d-b6af-f599e4788b1e';
+
   function initContactForm() {
     const form = document.getElementById('contactForm');
     if (!form) return;
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const status = document.getElementById('formStatus');
       const name = form.querySelector('#name')?.value.trim();
       const email = form.querySelector('#email')?.value.trim();
       const message = form.querySelector('#message')?.value.trim();
+      const botcheck = form.querySelector('#botcheck')?.checked;
 
       if (!name || !email || !message) {
         if (status) { status.textContent = 'Please fill in every field before sending.'; status.className = 'form-status error'; }
@@ -126,13 +135,40 @@
         if (status) { status.textContent = 'That email address doesn\u2019t look right.'; status.className = 'form-status error'; }
         return;
       }
+      if (botcheck) return; // honeypot field a real visitor never touches
 
-      const subject = encodeURIComponent(`Portfolio contact from ${name}`);
-      const body = encodeURIComponent(`${message}\n\n\u2014 ${name} (${email})`);
-      window.location.href = `mailto:mjules.tek@gmail.com?subject=${subject}&body=${body}`;
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalLabel = submitBtn ? submitBtn.textContent : '';
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending\u2026'; }
+      if (status) { status.textContent = ''; status.className = 'form-status'; }
 
-      if (status) { status.textContent = 'Opening your email client\u2026 if nothing happens, email mjules.tek@gmail.com directly.'; status.className = 'form-status success'; }
-      form.reset();
+      try {
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            access_key: WEB3FORMS_ACCESS_KEY,
+            subject: `Portfolio contact from ${name}`,
+            from_name: name,
+            name,
+            email,
+            message,
+            replyto: email
+          })
+        });
+        const result = await response.json();
+
+        if (result.success) {
+          if (status) { status.textContent = 'Message sent \u2014 thanks, I\u2019ll get back to you soon.'; status.className = 'form-status success'; }
+          form.reset();
+        } else {
+          throw new Error(result.message || 'Something went wrong.');
+        }
+      } catch (err) {
+        if (status) { status.textContent = 'Couldn\u2019t send that \u2014 email me directly at mjules.tek@gmail.com instead.'; status.className = 'form-status error'; }
+      } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
+      }
     });
   }
 
