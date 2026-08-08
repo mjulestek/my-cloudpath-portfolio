@@ -351,7 +351,7 @@ function renderProjectDetails() {
   const project = PROJECTS.find(p => p.id === id) || PROJECTS[0];
   const index = PROJECTS.findIndex(p => p.id === project.id);
 
-  document.title = `${project.title} \u2014 CloudPath`;
+  document.title = `${project.title} \u2014 Jules Munyaneza`;
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) metaDesc.setAttribute('content', project.summary);
 

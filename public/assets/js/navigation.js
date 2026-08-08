@@ -29,7 +29,7 @@
   };
 
   function brand() {
-    return '<a href="index.html" class="nav-brand"><span class="brand-mark">CP</span>CloudPath</a>';
+    return '<a href="index.html" class="nav-brand"><span class="brand-mark">J</span>ules Munyaneza</a>';
   }
 
   function renderStatusStrip() {
@@ -97,7 +97,7 @@
           <div class="footer-col">
             <h5>Legal</h5>
             <a href="privacy.html">Privacy policy</a>
-            <span>&copy; ${year} CloudPath</span>
+            <span>&copy; ${year} Jules Munyaneza</span>
           </div>
         </div>
         <div class="footer-bottom">

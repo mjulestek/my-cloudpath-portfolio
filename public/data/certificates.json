@@ -1,10 +1,10 @@
 {
-  "note": "This file mirrors the certification cards on certifications.html. No credential IDs are published here since they are private per-holder verification numbers — each card instead links to the official page of the issuing program/organization.",
+  "note": "This file mirrors the certification cards on certifications.html and the homepage strip. Badge images are the holder's actual earned badges/certificates, stored under assets/images/certifications/.",
   "certificates": [
-    { "name": "AWS Cloud Solutions Architect – Associate", "issuer": "Amazon Web Services", "issued": "2025", "issuerUrl": "https://aws.amazon.com/certification/certified-solutions-architect-associate/" },
-    { "name": "AWS Cloud Practitioner Certificate", "issuer": "AWS re/Start Program", "issued": "2024", "issuerUrl": "https://aws.amazon.com/certification/certified-cloud-practitioner/" },
-    { "name": "AWS re/Start Graduate Badge", "issuer": "AWS Training and Certification", "issued": "2024", "issuerUrl": "https://aws.amazon.com/training/restart/" },
-    { "name": "DevOps and Cloud Bootcamp", "issuer": "TechWorld with Nana", "issued": "2024", "issuerUrl": "https://www.techworld-with-nana.com/" },
-    { "name": "Cloud Engineering Bootcamp", "issuer": "neue fische, Hamburg", "issued": "2023", "issuerUrl": "https://www.neuefische.de/en" }
+    { "name": "AWS Certified Solutions Architect – Associate", "issuer": "Amazon Web Services", "issued": "2025", "issuerUrl": "https://aws.amazon.com/certification/certified-solutions-architect-associate/", "image": "assets/images/certifications/aws-solutions-architect-associate.png" },
+    { "name": "AWS Certified Cloud Practitioner", "issuer": "AWS re/Start Program", "issued": "2024", "issuerUrl": "https://aws.amazon.com/certification/certified-cloud-practitioner/", "image": "assets/images/certifications/aws-cloud-practitioner.png" },
+    { "name": "AWS re/Start Graduate", "issuer": "AWS Training and Certification", "issued": "2024", "issuerUrl": "https://aws.amazon.com/training/restart/", "image": "assets/images/certifications/aws-restart-graduate.png" },
+    { "name": "DevOps Practitioner", "issuer": "TechWorld with Nana", "issued": "2024", "issuerUrl": "https://www.techworld-with-nana.com/", "image": "assets/images/certifications/devops-practitioner-techworld-nana.png" },
+    { "name": "AWS Cloud Engineer", "issuer": "neue fische, Hamburg", "issued": "2026", "issuerUrl": "https://www.neuefische.de/en", "image": "assets/images/certifications/neuefische-cloud-engineer.jpg" }
   ]
 }

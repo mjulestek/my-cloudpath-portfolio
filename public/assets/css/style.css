@@ -1,5 +1,5 @@
 /* ============================================================
-   CloudPath — Design System (v2)
+   Design System (v2)
    Rebuilt on a light "learning-platform" system: warm white
    surfaces, soft mint section bands, forest-green primary,
    gold secondary, big rounded white cards. The dark terminal
@@ -318,20 +318,16 @@ main { display: block; }
 .nav-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 1.1rem;
   color: var(--text-primary);
 }
 .nav-brand .brand-mark {
-  width: 32px; height: 32px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-amber));
-  display: flex; align-items: center; justify-content: center;
-  color: #ffffff;
+  color: var(--accent);
   font-weight: 800;
-  font-size: 0.85rem;
+  font-size: 1.3em;
 }
 
 .nav-links {
@@ -895,7 +891,8 @@ main { display: block; }
 /* ============================================================
    CERTIFICATION CARDS
    ============================================================ */
-.cert-card { padding: 28px; display: flex; flex-direction: column; gap: 14px; }
+.cert-card { padding: 24px; display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center; }
+.cert-badge-img { width: 100%; max-width: 230px; height: 230px; object-fit: contain; margin: 0 auto 4px; display: block; }
 .cert-icon { width: 46px; height: 46px; border-radius: 13px; background: linear-gradient(135deg, var(--accent), var(--accent-amber)); display: flex; align-items: center; justify-content: center; color: #ffffff; font-family: var(--font-display); font-weight: 700; font-size: 0.85rem; }
 .cert-icon.amber { background: linear-gradient(135deg, var(--accent-amber), #e08a1c); }
 .cert-card h4 { font-size: 1.05rem; }
