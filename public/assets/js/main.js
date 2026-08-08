@@ -129,9 +129,9 @@
 
       const subject = encodeURIComponent(`Portfolio contact from ${name}`);
       const body = encodeURIComponent(`${message}\n\n\u2014 ${name} (${email})`);
-      window.location.href = `mailto:hello@cloudpath.dev?subject=${subject}&body=${body}`;
+      window.location.href = `mailto:mjules.tek@gmail.com?subject=${subject}&body=${body}`;
 
-      if (status) { status.textContent = 'Opening your email client\u2026 if nothing happens, email hello@cloudpath.dev directly.'; status.className = 'form-status success'; }
+      if (status) { status.textContent = 'Opening your email client\u2026 if nothing happens, email mjules.tek@gmail.com directly.'; status.className = 'form-status success'; }
       form.reset();
     });
   }
@@ -149,7 +149,6 @@
     { name: 'Grafana', icon: '<path d="M4 20V12l4-3v11z" fill="currentColor" opacity="0.6"/><path d="M10 20V8l4-4v16z" fill="currentColor" opacity="0.85"/><path d="M16 20v-8l4-3v11z" fill="currentColor"/>' },
     { name: 'Prometheus', icon: '<path d="M12 3c4 3 6 6 6 10a6 6 0 1 1-12 0c0-2 1-3 2-4 0 2 1 3 2 3-1-3 0-6 2-9z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/>' },
     { name: 'Ansible', icon: '<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><path d="M12 5v3M12 16v3M5 12h3M16 12h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' },
-    { name: 'ArgoCD', icon: '<path d="M4 12a8 8 0 0 1 13.6-5.7M20 12a8 8 0 0 1-13.6 5.7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M17 3v4h-4M7 21v-4h4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' },
     { name: 'GitLab', icon: '<path d="M12 20L4 9l3-6 5 6 5-6 3 6z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/>' },
     { name: 'Nexus', icon: '<rect x="4" y="4" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="13" y="4" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="4" y="13" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="13" y="13" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8" fill="none"/>' }
   ];

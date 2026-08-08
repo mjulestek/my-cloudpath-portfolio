@@ -28,13 +28,13 @@
     <div class="terminal" style="max-width:560px;width:100%;text-align:left;margin-bottom:36px;">
       <div class="terminal-bar">
         <span class="terminal-dot r"></span><span class="terminal-dot y"></span><span class="terminal-dot g"></span>
-        <span class="terminal-title">alex@cloudpath — infra</span>
+        <span class="terminal-title">jules@cloudpath — infra</span>
       </div>
       <div class="terminal-body">
-        <div class="terminal-line"><span class="prompt">$</span> <span class="path">~/infra</span> curl -I https://cloudpath.dev/this-page</div>
+        <div class="terminal-line"><span class="prompt">$</span> <span class="path">~/infra</span> curl -I https://__SITE_DOMAIN__/this-page</div>
         <div class="terminal-line warn">HTTP/2 404 Not Found</div>
-        <div class="terminal-line"><span class="prompt">$</span> <span class="path">~/infra</span> kubectl get route home</div>
-        <div class="terminal-line ok">home   Ready   cloudpath.dev/   &larr; try this one<span class="terminal-cursor"></span></div>
+        <div class="terminal-line"><span class="prompt">$</span> <span class="path">~/infra</span> curl -I https://__SITE_DOMAIN__/</div>
+        <div class="terminal-line ok">HTTP/2 200 OK   &larr; try this one<span class="terminal-cursor"></span></div>
       </div>
     </div>
 

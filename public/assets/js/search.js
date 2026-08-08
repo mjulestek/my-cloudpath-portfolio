@@ -1,8 +1,8 @@
 /* ============================================================
    search.js
    Command-palette style search modal (triggered by the nav icon
-   or the "/" key) that indexes projects, blog posts, and static
-   pages, and supports keyboard navigation.
+   or the "/" key) that indexes projects and static pages, and
+   supports keyboard navigation.
    ============================================================ */
 
 (function () {
@@ -12,7 +12,6 @@
     { title: 'About', href: 'about.html', type: 'Page' },
     { title: 'Projects', href: 'projects.html', type: 'Page' },
     { title: 'Certifications', href: 'certifications.html', type: 'Page' },
-    { title: 'Blog', href: 'blog.html', type: 'Page' },
     { title: 'Resume', href: 'resume.html', type: 'Page' },
     { title: 'Contact', href: 'contact.html', type: 'Page' }
   ];
@@ -21,10 +20,7 @@
     const projects = (window.PROJECTS || []).map(p => ({
       title: p.title, href: `project-details.html?id=${p.id}`, type: 'Project', sub: p.summary
     }));
-    const posts = (window.BLOG_POSTS || []).map(p => ({
-      title: p.title, href: `blog-post.html?slug=${p.slug}`, type: 'Article', sub: p.excerpt
-    }));
-    return [...STATIC_PAGES, ...projects, ...posts];
+    return [...STATIC_PAGES, ...projects];
   }
 
   function injectModal() {

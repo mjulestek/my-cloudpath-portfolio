@@ -449,7 +449,7 @@ main { display: block; }
 .profile-avatar {
   width: 52px; height: 52px;
   border-radius: 14px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-amber));
+  background: url('../images/avatar.jpg') center/cover no-repeat;
   flex-shrink: 0;
 }
 .profile-meta { flex: 1; min-width: 0; }

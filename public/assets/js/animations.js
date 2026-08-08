@@ -130,13 +130,13 @@
 
     const lines = [
       { prompt: true, text: 'terraform apply -auto-approve', cmd: true },
-      { text: 'Plan: 12 to add, 0 to change, 0 to destroy.' },
-      { text: 'module.eks.aws_eks_cluster.this: Creating...' },
-      { text: 'module.eks.aws_eks_cluster.this: Creation complete', cls: 'ok' },
-      { prompt: true, text: 'kubectl rollout status deploy/api', cmd: true },
-      { text: 'deployment "api" successfully rolled out', cls: 'ok' },
-      { prompt: true, text: 'argocd app sync payments-service', cmd: true },
-      { text: 'Sync OK \u2014 revision a91cf3d \u2192 production', cls: 'ok' }
+      { text: 'Plan: 4 to add, 0 to change, 0 to destroy.' },
+      { text: 'aws_cloudfront_distribution.site: Creating...' },
+      { text: 'aws_cloudfront_distribution.site: Creation complete', cls: 'ok' },
+      { prompt: true, text: 'git push origin main', cmd: true },
+      { text: 'Deploy Content workflow triggered', cls: 'ok' },
+      { prompt: true, text: 'kubectl get pods -n monitoring', cmd: true },
+      { text: 'prometheus-0   Running   2/2', cls: 'ok' }
     ];
 
     let li = 0, ci = 0;

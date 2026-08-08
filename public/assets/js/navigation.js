@@ -13,7 +13,6 @@
     { href: 'about.html', label: 'About', key: 'about' },
     { href: 'projects.html', label: 'Projects', key: 'projects' },
     { href: 'certifications.html', label: 'Certifications', key: 'certifications' },
-    { href: 'blog.html', label: 'Blog', key: 'blog' },
     { href: 'resume.html', label: 'Resume', key: 'resume' },
     { href: 'contact.html', label: 'Contact', key: 'contact' }
   ];
@@ -39,7 +38,7 @@
       <span class="dot"></span>
       <strong>All systems operational</strong>
       <span>&middot;</span>
-      <span>Berlin, DE &middot; UTC+1</span>
+      <span>Hamburg, DE &middot; UTC+1</span>
       <span>&middot;</span>
       <span>Open to new roles</span>
     </div>`;
@@ -63,7 +62,7 @@
     <div class="mobile-menu" id="mobileMenu">
       ${NAV_LINKS.map(l => `<a href="${l.href}">${l.label}</a>`).join('')}
       <div class="mobile-actions">
-        <a href="https://github.com/" target="_blank" rel="noopener" class="btn btn-secondary btn-block">GitHub</a>
+        <a href="https://github.com/mjulestek" target="_blank" rel="noopener" class="btn btn-secondary btn-block">GitHub</a>
         <a href="contact.html" class="btn btn-primary btn-block">Contact</a>
       </div>
     </div>`;
@@ -77,10 +76,10 @@
         <div class="footer-grid">
           <div class="footer-brand">
             ${brand()}
-            <p>Cloud &amp; DevOps engineer building resilient, automated infrastructure on AWS, Kubernetes, and Terraform. Currently based in Berlin, working with teams anywhere.</p>
+            <p>DevOps &amp; Cloud Engineer building automated, Infrastructure-as-Code driven systems on AWS, Kubernetes, and Terraform. Currently based in Hamburg.</p>
             <div class="profile-social" style="margin-top:16px;">
-              <a href="https://github.com/" target="_blank" rel="noopener" class="icon-btn" aria-label="GitHub profile">${ICONS.github}</a>
-              <a href="https://linkedin.com/" target="_blank" rel="noopener" class="icon-btn" aria-label="LinkedIn profile">${ICONS.linkedin}</a>
+              <a href="https://github.com/mjulestek" target="_blank" rel="noopener" class="icon-btn" aria-label="GitHub profile">${ICONS.github}</a>
+              <a href="https://www.linkedin.com/in/jules-munyaneza-40418a364/" target="_blank" rel="noopener" class="icon-btn" aria-label="LinkedIn profile">${ICONS.linkedin}</a>
             </div>
           </div>
           <div class="footer-col">
@@ -88,13 +87,12 @@
             <a href="about.html">About</a>
             <a href="projects.html">Projects</a>
             <a href="certifications.html">Certifications</a>
-            <a href="blog.html">Blog</a>
           </div>
           <div class="footer-col">
             <h5>Work</h5>
             <a href="resume.html">Resume</a>
             <a href="contact.html">Contact</a>
-            <a href="mailto:hello@cloudpath.dev">hello@cloudpath.dev</a>
+            <a href="mailto:mjules.tek@gmail.com">mjules.tek@gmail.com</a>
           </div>
           <div class="footer-col">
             <h5>Legal</h5>
@@ -104,7 +102,7 @@
         </div>
         <div class="footer-bottom">
           <span>Built with HTML, CSS &amp; vanilla JS &mdash; zero frameworks, zero build step.</span>
-          <div class="status-strip"><span class="dot"></span><strong>Uptime 99.98%</strong></div>
+          <div class="status-strip"><span class="dot"></span><strong>Deployed via Terraform + GitHub Actions</strong></div>
         </div>
       </div>
     </footer>

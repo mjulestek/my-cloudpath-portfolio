@@ -7,232 +7,231 @@
 
 const PROJECTS = [
   {
-    id: 'eks-platform',
-    title: 'Multi-Tenant EKS Platform',
-    summary: 'A self-service Kubernetes platform on EKS with GitOps delivery, giving 14 product teams isolated namespaces without a ticket queue.',
-    provider: 'AWS',
-    difficulty: 'Advanced',
-    duration: '4 months',
-    featured: true,
-    tags: ['Kubernetes', 'Terraform', 'ArgoCD', 'AWS', 'Helm'],
-    github: 'https://github.com/',
-    problem: 'Fourteen product teams shared two hand-built EKS clusters. Every namespace, IAM role, and ingress rule required a platform-team ticket, and the average wait was three days \u2014 slow enough that teams started provisioning shadow infrastructure to route around it.',
-    solution: 'Replaced the shared clusters with a Terraform-defined EKS platform where teams request a namespace through a Git pull request. ArgoCD reconciles the request into a fully-scoped namespace with network policy, resource quotas, and an IAM role bound by IRSA \u2014 no ticket, no platform engineer in the loop.',
-    architecture: 'Three EKS clusters (dev, staging, prod) sit behind a shared VPC with private subnets per availability zone. Karpenter handles node autoscaling by workload shape, and every cluster add-on \u2014 ingress-nginx, cert-manager, external-dns \u2014 is itself an ArgoCD Application, so the platform manages itself the same way tenants manage their workloads.',
-    cicd: [
-      { stage: 'Lint & plan', detail: 'Terraform fmt, tflint, and a speculative plan posted as a PR comment.' },
-      { stage: 'Policy check', detail: 'OPA/Conftest validates the plan against guardrails \u2014 no public S3, no 0.0.0.0/0 ingress.' },
-      { stage: 'Apply', detail: 'Terraform Cloud applies on merge to main, with state locked per environment.' },
-      { stage: 'Sync', detail: 'ArgoCD detects the new manifests and reconciles the cluster within 90 seconds.' },
-      { stage: 'Verify', detail: 'Synthetic checks confirm the namespace, quota, and ingress are reachable before the PR is marked done.' }
-    ],
-    infra: {
-      terraform: 'Reusable modules for VPC, EKS, IRSA, and namespace-as-a-product, versioned and pinned per environment.',
-      docker: 'Distroless base images with a shared build cache, cutting average image size by 61%.',
-      kubernetes: 'Namespace-per-team with ResourceQuota, NetworkPolicy default-deny, and Kyverno admission policies.',
-      networking: 'Private subnets, VPC endpoints for S3/ECR, and an internal NLB per environment \u2014 no NAT gateway sprawl.',
-      security: 'IRSA for pod-level IAM, OPA Gatekeeper for policy-as-code, and short-lived credentials via AWS SSO.',
-      monitoring: 'Prometheus + Grafana per cluster, federated into a central Grafana with team-scoped dashboards.',
-      cost: 'Karpenter consolidation and spot-friendly node pools cut compute spend by 34% year over year.'
-    },
-    lessons: [
-      'Self-service only works if the guardrails are enforced in CI, not in a wiki page nobody reads.',
-      'Namespace-as-a-product needed a real owner \u2014 treating it as "just YAML" caused drift within weeks.'
-    ],
-    future: [
-      'Add a cost-per-namespace dashboard so teams see their own spend, not just the platform total.',
-      'Migrate remaining stateful workloads to the EBS CSI driver with volume snapshots.'
-    ],
-    gallery: 3
-  },
-  {
-    id: 'ci-cd-pipeline',
-    title: 'Zero-Downtime CI/CD for Microservices',
-    summary: 'A GitHub Actions to ArgoCD pipeline shipping 20+ microservices to production multiple times a day with automated rollback.',
-    provider: 'Multi-cloud',
-    difficulty: 'Intermediate',
-    duration: '6 weeks',
-    featured: true,
-    tags: ['GitHub Actions', 'ArgoCD', 'Docker', 'Kubernetes'],
-    github: 'https://github.com/',
-    problem: 'Deploys were a Friday-afternoon Slack thread: build locally, SSH into a box, restart a process, hope. A bad deploy meant 20-40 minutes of manual rollback while the on-call engineer read through logs.',
-    solution: 'Standardised every service on the same GitHub Actions workflow \u2014 build, test, scan, publish \u2014 and handed deployment to ArgoCD with an automated rollback triggered by failed health checks or an elevated error rate from Prometheus.',
-    architecture: 'Each push to main builds a container image, runs unit and contract tests, scans with Trivy, and pushes to a private registry. ArgoCD Image Updater bumps the tag in a Git-tracked manifest repo, and a progressive rollout (Argo Rollouts, canary at 10/50/100%) verifies the new revision before it takes full traffic.',
-    cicd: [
-      { stage: 'Build & test', detail: 'Matrix build across services, unit + contract tests, ~4 minutes end to end.' },
-      { stage: 'Scan', detail: 'Trivy blocks the pipeline on any critical CVE with a known fix available.' },
-      { stage: 'Publish', detail: 'Image pushed to ECR with an immutable digest tag, never :latest.' },
-      { stage: 'Canary', detail: 'Argo Rollouts shifts 10% of traffic, watches error rate and p99 latency for 5 minutes.' },
-      { stage: 'Promote or rollback', detail: 'Automatic promotion to 100% on healthy metrics, automatic rollback on regression.' }
-    ],
-    infra: {
-      terraform: 'ECR repositories, IAM roles for GitHub OIDC (no long-lived AWS keys in CI), and Argo Rollouts CRDs.',
-      docker: 'Multi-stage builds shared across services via a common base image, refreshed weekly.',
-      kubernetes: 'Argo Rollouts for canary analysis, backed by a Prometheus metric provider.',
-      networking: 'Internal service mesh (Linkerd) for mTLS between services and traffic-split during canaries.',
-      security: 'GitHub OIDC federation removes static cloud credentials from every workflow.',
-      monitoring: 'Deployment markers pushed to Grafana so every dashboard shows exactly when a rollout happened.',
-      cost: 'Shared runners and layer caching cut average CI minutes per service by 47%.'
-    },
-    lessons: [
-      'Automated rollback is only trustworthy once the health signal is boring and well-tested \u2014 flaky checks erode confidence fast.',
-      'Canary analysis windows needed to be longer for low-traffic services, or noise looked like a regression.'
-    ],
-    future: [
-      'Add automatic dependency-bump PRs with the same canary gate applied to app code.',
-      'Extend canary analysis to include business metrics, not just infra health.'
-    ],
-    gallery: 3
-  },
-  {
-    id: 'observability-stack',
-    title: 'Unified Observability Stack',
-    summary: 'Consolidated five disconnected monitoring tools into one Prometheus, Loki, and Grafana stack with SLO-based alerting.',
+    id: 'aws-portfolio-deployment',
+    title: 'This Portfolio — AWS Static Site with Terraform & GitHub Actions',
+    summary: 'The site you\u2019re looking at right now: an S3 + CloudFront static site provisioned with Terraform and deployed by GitHub Actions, authenticated to AWS via OIDC with no stored credentials.',
     provider: 'AWS',
     difficulty: 'Intermediate',
-    duration: '5 weeks',
+    duration: 'Ongoing',
     featured: true,
-    tags: ['Prometheus', 'Grafana', 'Terraform', 'AWS'],
-    github: 'https://github.com/',
-    problem: 'Metrics lived in CloudWatch, logs in a paid SaaS tool, traces nowhere. Incident response meant four browser tabs and a lot of guessing about which system had the answer.',
-    solution: 'Stood up Prometheus for metrics, Loki for logs, and Tempo for traces, all queried through one Grafana instance, and rebuilt every alert around SLOs instead of raw thresholds.',
-    architecture: 'Prometheus scrapes via a sidecar on every pod, Loki ingests structured JSON logs shipped by Promtail, and Tempo receives OpenTelemetry traces. Grafana correlates all three with exemplars, so an alert links straight from a metric spike to the trace that caused it.',
+    tags: ['Terraform', 'AWS', 'GitHub Actions', 'CloudFront', 'S3'],
+    github: 'https://github.com/mjulestek/my-cloudpath-portfolio',
+    problem: 'Most portfolio sites hide their own infrastructure behind a hosting dashboard. I wanted mine to double as proof of the skills it\u2019s advertising \u2014 provisioned as code and deployed through a real pipeline, not a few clicks in a control panel.',
+    solution: 'Built on a private S3 bucket behind CloudFront, provisioned entirely with Terraform. GitHub Actions runs two separate pipelines \u2014 one applies infrastructure changes only after a human approves the plan, the other deploys content automatically on every push \u2014 both authenticating to AWS via OIDC, with no access keys stored anywhere.',
+    architecture: 'A private S3 bucket holds the site files, reachable only through CloudFront using Origin Access Control \u2014 there is no public path to the bucket at all. TLS comes from an ACM certificate, DNS-validated by hand since the domain isn\u2019t on Route 53. Terraform state lives in a separate S3 bucket with native state locking, no DynamoDB table required.',
     cicd: [
-      { stage: 'Define SLO', detail: 'Each service ships an SLO manifest (99.9% availability, 300ms p95) reviewed in code review.' },
-      { stage: 'Generate rules', detail: 'A Terraform module turns the SLO manifest into Prometheus recording and alerting rules.' },
-      { stage: 'Deploy', detail: 'Rules and dashboards are applied via Grafana\u2019s Terraform provider, versioned with the service.' },
-      { stage: 'Burn-rate alert', detail: 'Multi-window burn-rate alerts page only when the error budget is genuinely at risk.' }
+      { stage: 'Push to main', detail: 'Any change under public/ triggers the deploy workflow automatically.' },
+      { stage: 'Render', detail: 'A shell script substitutes the real domain into every page before upload.' },
+      { stage: 'Sync', detail: 'aws s3 sync uploads the rendered site and removes anything no longer present.' },
+      { stage: 'Invalidate', detail: 'CloudFront\u2019s cache is invalidated so the change is visible within seconds, not minutes.' },
+      { stage: 'Infra changes', detail: 'A separate, manually-triggered workflow plans Terraform changes and waits for approval before applying.' }
     ],
     infra: {
-      terraform: 'Grafana provider manages dashboards and alert rules as code, reviewed like any other change.',
-      docker: 'Prometheus, Loki, and Tempo run as a Helm-managed stack with object storage backends.',
-      kubernetes: 'Sidecar-based scraping with pod-level ServiceMonitors.',
-      networking: 'Private ingress for Grafana, SSO-gated, no public dashboard exposure.',
-      security: 'Read-only data source credentials, per-team RBAC folders in Grafana.',
-      monitoring: 'The stack monitors itself \u2014 a meta-dashboard tracks Prometheus scrape health and Loki ingestion lag.',
-      cost: 'Replacing the SaaS log tool saved roughly $4,200/month at current log volume.'
+      terraform: 'One flat main.tf provisions the S3 bucket, CloudFront distribution, Origin Access Control, and bucket policy \u2014 no module layer, since there\u2019s only one environment to call it from.',
+      docker: 'Not used \u2014 this is a static site with nothing to containerize.',
+      kubernetes: 'Not used here.',
+      networking: 'CloudFront terminates TLS and serves globally; the origin bucket has no public network path at all.',
+      security: 'GitHub Actions authenticates via OIDC \u2014 no AWS access keys stored in the repo, ever. Two IAM roles, scoped separately for infrastructure and content deploys.',
+      monitoring: 'CloudFront and S3 access logging is available natively; not yet wired into a dashboard.',
+      cost: 'Pay-as-you-go S3 and CloudFront, no fixed server cost \u2014 a few dollars a month at this traffic level.'
     },
     lessons: [
-      'SLO-based alerting cut 3am pages by more than half once thresholds stopped firing on noise.',
-      'Log volume needed active budgeting \u2014 unstructured debug logs quietly became the biggest cost driver.'
+      'Terraform\u2019s S3 backend needs its state bucket to exist before it can use it \u2014 solved with a small, local-state \u201cbootstrap\u201d stack that only runs once.',
+      'A CloudFront distribution gets a brand-new domain name every time it\u2019s fully destroyed and recreated \u2014 DNS records need updating to match, easy to miss the first time.'
     ],
     future: [
-      'Add long-term metric storage via Thanos for year-over-year capacity planning.',
-      'Wire exemplars into every service, not just the top ten by traffic.'
-    ],
-    gallery: 3
-  },
-  {
-    id: 'terraform-landing-zone',
-    title: 'Multi-Account AWS Landing Zone',
-    summary: 'A Terraform-and-Control-Tower landing zone that turns a new AWS account request into a fully governed environment in under 20 minutes.',
-    provider: 'AWS',
-    difficulty: 'Advanced',
-    duration: '3 months',
-    featured: false,
-    tags: ['Terraform', 'AWS', 'Security', 'IAM'],
-    github: 'https://github.com/',
-    problem: 'New AWS accounts were provisioned by hand: a spreadsheet of steps, inconsistent tagging, and security baselines that depended on whoever ran the checklist that week.',
-    solution: 'Built a landing zone on AWS Control Tower with Terraform-managed account factory customizations, so every new account inherits guardrails, logging, and network baselines automatically.',
-    architecture: 'A dedicated management account runs Control Tower and Terraform Cloud. New accounts are requested via a Git PR to an account-manifest repo; a pipeline provisions the account, applies SCPs, wires up centralized logging to the audit account, and peers the account into the shared network.',
-    cicd: [
-      { stage: 'Request', detail: 'A PR adds an account manifest (name, OU, budget) to the repo.' },
-      { stage: 'Provision', detail: 'Control Tower Account Factory creates the account inside the correct OU.' },
-      { stage: 'Baseline', detail: 'Terraform applies SCPs, GuardDuty, Config rules, and centralized CloudTrail.' },
-      { stage: 'Network', detail: 'Transit Gateway attachment and route propagation connect the account to shared services.' }
-    ],
-    infra: {
-      terraform: 'Account factory customizations and SCP modules versioned per organizational unit.',
-      docker: 'N/A \u2014 this project is account and network infrastructure, not workloads.',
-      kubernetes: 'N/A for this project.',
-      networking: 'Transit Gateway hub-and-spoke topology with centralized egress via a shared NAT account.',
-      security: 'Service Control Policies deny risky actions org-wide; GuardDuty and Security Hub centralized in the audit account.',
-      monitoring: 'Centralized CloudTrail and Config aggregator with Athena queries for audit requests.',
-      cost: 'Consolidated billing and mandatory budget alarms cut unbudgeted spend surprises to zero over two quarters.'
-    },
-    lessons: [
-      'SCPs are powerful enough to break things quietly \u2014 every new policy shipped to a sandbox OU first.',
-      'A 20-minute account meant nothing if the requester still waited two days for a human to review the PR; the review itself needed a fast lane for low-risk manifests.'
-    ],
-    future: [
-      'Auto-expire sandbox accounts that see no activity for 60 days.',
-      'Add a self-service budget increase flow gated by a lightweight approval, not a ticket.'
+      'Add a staging environment before reusing this exact pattern on a second project.',
+      'Wire the existing CloudFront access logs into a small dashboard instead of leaving them unused in S3.'
     ],
     gallery: 2
   },
   {
-    id: 'gcp-data-pipeline',
-    title: 'Event-Driven Data Pipeline on GCP',
-    summary: 'A serverless ingestion pipeline processing 40M events a day through Pub/Sub, Dataflow, and BigQuery with sub-minute latency.',
-    provider: 'GCP',
+    id: 'eks-infrastructure',
+    title: 'Automated AWS EKS Infrastructure & Microservices Delivery',
+    summary: 'A Terraform-provisioned VPC and EKS cluster running a multi-container microservices app \u2014 MongoDB and Redis \u2014 deployed via Helm across dedicated namespaces.',
+    provider: 'AWS',
     difficulty: 'Advanced',
-    duration: '10 weeks',
-    featured: false,
-    tags: ['GCP', 'Terraform', 'Pub/Sub', 'BigQuery'],
-    github: 'https://github.com/',
-    problem: 'The analytics team ran a nightly batch job that took six hours and regularly failed halfway through, leaving dashboards a full day stale by the time anyone noticed.',
-    solution: 'Replaced the nightly batch with a streaming pipeline: events land in Pub/Sub, a Dataflow job transforms and enriches them in near real time, and results land in partitioned BigQuery tables that dashboards query directly.',
-    architecture: 'Application services publish events to Pub/Sub topics. A Dataflow (Apache Beam) streaming job windows and deduplicates events, enriches them against a Bigtable lookup, and writes to BigQuery with schema evolution handled automatically. Dead-lettered events land in a separate topic for replay.',
+    duration: 'Personal project',
+    featured: true,
+    tags: ['Terraform', 'AWS', 'EKS', 'Kubernetes', 'Helm'],
+    github: 'https://github.com/mjulestek',
+    problem: 'Wanted real hands-on experience with a multi-service Kubernetes environment on AWS \u2014 not a local minikube cluster, but one that forces actual decisions about IAM, networking, and state management.',
+    solution: 'Used Terraform modules to provision a custom VPC with public and private subnets, IAM roles, and an EKS cluster, with state stored remotely in S3. Deployed a multi-container microservices application backed by MongoDB and Redis using Helm, organized into dedicated Kubernetes namespaces.',
+    architecture: 'A custom VPC spans public and private subnets across availability zones. EKS runs in the private subnets, with IAM roles scoped per workload rather than one broad cluster-wide role. Terraform state is remote, so the whole environment can be rebuilt from code.',
     cicd: [
-      { stage: 'Build', detail: 'Beam pipeline packaged and tested against a local Pub/Sub emulator.' },
-      { stage: 'Deploy', detail: 'Terraform provisions topics, subscriptions, and the Dataflow Flex Template.' },
-      { stage: 'Canary window', detail: 'New pipeline version runs alongside the old one for 30 minutes, output compared row-for-row.' },
-      { stage: 'Cutover', detail: 'Traffic fully shifts once row counts and latency match expectations.' }
+      { stage: 'Provision', detail: 'terraform apply builds the VPC, IAM roles, and EKS cluster from versioned modules.' },
+      { stage: 'Configure', detail: 'kubectl and Helm connect to the new cluster once it\u2019s up.' },
+      { stage: 'Deploy', detail: 'Helm charts install the microservices, MongoDB, and Redis into their own namespaces.' },
+      { stage: 'Verify', detail: 'Namespace isolation and resource boundaries are checked before calling it done.' }
     ],
     infra: {
-      terraform: 'Pub/Sub topics, Dataflow Flex Templates, and BigQuery datasets defined and reviewed as code.',
-      docker: 'Dataflow Flex Template packaged as a container for reproducible worker startup.',
-      kubernetes: 'N/A \u2014 Dataflow manages its own worker pool.',
-      networking: 'Private Google Access with no public IPs on Dataflow workers.',
-      security: 'Per-topic IAM bindings and column-level security on sensitive BigQuery fields.',
-      monitoring: 'Dataflow job metrics and Pub/Sub backlog age feed a Grafana dashboard with backlog-based alerting.',
-      cost: 'Streaming replaced a six-hour daily batch job, cutting compute cost by 28% versus always-on batch capacity.'
+      terraform: 'Reusable modules for the VPC, IAM, and EKS \u2014 the same pattern used across the other Terraform projects here.',
+      docker: 'Application services run as containers, scheduled by Kubernetes.',
+      kubernetes: 'Workloads split across dedicated namespaces for clear separation between services.',
+      networking: 'Public and private subnets per availability zone, EKS nodes kept in the private subnets.',
+      security: 'IAM roles scoped per component instead of one broad cluster-wide role.',
+      monitoring: 'Not the focus of this project \u2014 see the Kubernetes Observability project below.',
+      cost: 'The EKS control plane and worker nodes are the main cost driver \u2014 kept small and torn down when not actively in use.'
     },
     lessons: [
-      'Late-arriving events needed a real windowing strategy \u2014 a naive fixed window silently dropped ~2% of records.',
-      'Schema evolution in BigQuery is forgiving until it isn\u2019t; a dry-run step against a staging dataset caught two breaking changes before production.'
+      'Terraform modules earn their complexity fast once you\u2019re managing a VPC, IAM, and EKS together \u2014 copy-pasted resources across environments get messy quickly.',
+      'Namespace-per-service is simple to set up and immediately clarifies which component owns what.'
     ],
     future: [
-      'Add exactly-once semantics for the payment-events topic specifically.',
-      'Move dashboard queries to BigQuery materialized views to cut warehouse cost further.'
+      'Add Terraform-managed autoscaling instead of a statically-sized node group.',
+      'Put a proper ingress controller in front of the services instead of relying on port-forwarding for access.'
     ],
     gallery: 2
   },
   {
-    id: 'ansible-fleet',
-    title: 'Configuration Management for a 300-Node Fleet',
-    summary: 'Replaced manual server configuration with idempotent Ansible playbooks, cutting new-host provisioning from a day to nine minutes.',
-    provider: 'On-prem',
-    difficulty: 'Beginner',
-    duration: '3 weeks',
-    featured: false,
-    tags: ['Ansible', 'Linux', 'Security'],
-    github: 'https://github.com/',
-    problem: 'Bare-metal and VM hosts were configured by hand from a wiki page that drifted out of date within a month of being written. No two "identical" servers were actually identical.',
-    solution: 'Wrote idempotent Ansible playbooks and roles covering base OS hardening, user access, monitoring agents, and application runtimes, run against a dynamic inventory sourced from the internal CMDB.',
-    architecture: 'A control node runs playbooks against hosts grouped by role (web, db, cache, bastion). Vault-encrypted variables hold secrets, and a nightly drift-detection run reports any host that no longer matches its intended state.',
+    id: 'jenkins-cicd-platform',
+    title: 'CI/CD Platform with Jenkins Shared Libraries',
+    summary: 'Reusable Jenkins Shared Libraries standardizing build, test, and deploy across multiple projects \u2014 semantic versioning, Docker builds, and artifact publishing to Nexus and ECR.',
+    provider: 'Self-hosted',
+    difficulty: 'Intermediate',
+    duration: 'Personal project',
+    featured: true,
+    tags: ['Jenkins', 'Groovy', 'Docker', 'Nexus', 'AWS ECR'],
+    github: 'https://github.com/mjulestek',
+    problem: 'Every project ending up with its own hand-written Jenkinsfile means the same build logic gets copy-pasted and slowly drifts apart \u2014 a fix in one pipeline never reaches the others.',
+    solution: 'Wrote reusable Jenkins Shared Libraries in Groovy that standardize the build-test-publish sequence across projects. Individual pipelines call into the shared library instead of repeating logic, triggered automatically by GitHub and GitLab webhooks.',
+    architecture: 'A central Shared Library repository holds the pipeline logic. Each project\u2019s own Jenkinsfile is a thin wrapper that calls into the library, passing only its own project-specific parameters.',
     cicd: [
-      { stage: 'Lint', detail: 'ansible-lint and a syntax check run on every pull request.' },
-      { stage: 'Molecule test', detail: 'Roles are tested against a disposable container before merge.' },
-      { stage: 'Apply', detail: 'Approved changes run against a canary host group first, then the full fleet.' },
-      { stage: 'Drift check', detail: 'A nightly check-mode run flags any host that has drifted from its playbook state.' }
+      { stage: 'Trigger', detail: 'A push to GitHub or GitLab fires a webhook that starts the pipeline.' },
+      { stage: 'Version', detail: 'Semantic versioning is applied automatically by the shared library logic.' },
+      { stage: 'Build & test', detail: 'Maven or npm builds run depending on the project type.' },
+      { stage: 'Package', detail: 'A Docker image is built as the pipeline\u2019s final artifact.' },
+      { stage: 'Publish', detail: 'Images and artifacts are pushed to Sonatype Nexus Repository or Amazon ECR.' }
     ],
     infra: {
-      terraform: 'N/A for this project \u2014 configuration management on existing hosts, not provisioning.',
-      docker: 'N/A \u2014 bare-metal and VM fleet, not containerized.',
-      kubernetes: 'N/A for this project.',
-      networking: 'Bastion-only SSH access, host firewalls managed as an Ansible role.',
-      security: 'Ansible Vault for secrets, automatic CIS benchmark hardening role applied fleet-wide.',
-      monitoring: 'Node exporter and the logging agent installed and verified by the same playbook that configures the host.',
-      cost: 'Provisioning time dropped from a full day of manual work to nine minutes, freeing roughly 15 hours/week of engineer time.'
+      terraform: 'Not used directly \u2014 infrastructure for the Jenkins host itself is managed separately.',
+      docker: 'Every pipeline produces a Docker image as its final build artifact.',
+      kubernetes: 'Not used in this specific project.',
+      networking: 'Jenkins reaches GitHub, GitLab, and the artifact registries over standard outbound HTTPS.',
+      security: 'Registry and Git credentials are stored in Jenkins\u2019 own credential store, never hardcoded in a Jenkinsfile.',
+      monitoring: 'Build status is visible per-pipeline in Jenkins; no separate dashboard layered on top.',
+      cost: 'Runs on existing infrastructure \u2014 no additional cloud spend tied specifically to this project.'
     },
     lessons: [
-      'Idempotency has to be tested, not assumed \u2014 two early roles were destructive on re-run until Molecule caught it.',
-      'A drift report nobody reads is worse than no report; routing it into the team\u2019s existing alert channel is what made it stick.'
+      'A shared library only pays off once more than one project actually uses it \u2014 the first migration is the hard one.',
+      'Groovy\u2019s flexibility is also a risk: without discipline, \u201cshared\u201d logic quietly grows per-project special cases.'
     ],
     future: [
-      'Migrate remaining manually-managed legacy hosts into the same inventory.',
-      'Add automated CVE patching for the base OS role with a maintenance-window gate.'
+      'Add automated tests for the shared library itself, not just the projects that consume it.',
+      'Document its public functions properly so onboarding a new project doesn\u2019t require reading the source.'
+    ],
+    gallery: 2
+  },
+  {
+    id: 'engineering-platform',
+    title: 'Engineering Platform & Portfolio Dashboard',
+    summary: 'A self-hosted engineering dashboard built with Next.js and React, integrating GitHub, Jenkins, Nexus, and AWS S3 through REST APIs, containerized and served behind Nginx.',
+    provider: 'Self-hosted',
+    difficulty: 'Advanced',
+    duration: 'Personal project',
+    featured: true,
+    tags: ['Next.js', 'React', 'TypeScript', 'Docker', 'Nginx'],
+    github: 'https://github.com/mjulestek',
+    problem: 'Wanted a portfolio that was also a genuinely useful tool \u2014 one dashboard to check GitHub activity, Jenkins builds, and Nexus artifacts instead of switching between four different tabs.',
+    solution: 'Built a production-style engineering platform with Next.js and React, integrating GitHub, Jenkins, Nexus Repository, YouTube, and AWS S3 through their REST APIs. Containerized with Docker and Docker Compose, served through Nginx as a reverse proxy on Hetzner Cloud.',
+    architecture: 'A Next.js application runs behind Nginx, which handles TLS termination and routing. Docker Compose ties the app together with its dependencies for consistent local development and deployment.',
+    cicd: [
+      { stage: 'Build', detail: 'The Next.js app is built and containerized with Docker.' },
+      { stage: 'Test', detail: 'GitHub Actions runs checks on every push.' },
+      { stage: 'Deploy', detail: 'Docker Compose brings up the app and Nginx together on the server.' }
+    ],
+    infra: {
+      terraform: 'Planned but not yet in place \u2014 the Hetzner Cloud server is currently provisioned by hand.',
+      docker: 'The app and its dependencies run as Docker Compose services.',
+      kubernetes: 'Not used \u2014 single-host deployment is enough at this scale.',
+      networking: 'Nginx reverse-proxies requests to the app container and terminates TLS.',
+      security: 'API tokens for GitHub, Jenkins, and Nexus are kept out of the codebase via environment variables.',
+      monitoring: 'Not yet wired up \u2014 a reasonable next step.',
+      cost: 'A single small Hetzner Cloud instance, chosen deliberately to keep this affordable.'
+    },
+    lessons: [
+      'Integrating several REST APIs into one dashboard surfaces a lot of small inconsistencies in how each service structures its responses.',
+      'Docker Compose is enough structure for a single-host personal project \u2014 Kubernetes would have been overkill here.'
+    ],
+    future: [
+      'Replace the manually-provisioned Hetzner server with Terraform, matching the approach used on the AWS projects.',
+      'Add authentication so the dashboard could eventually be shared, not just used locally.'
+    ],
+    gallery: 3
+  },
+  {
+    id: 'terraform-ansible-provisioning',
+    title: 'Dynamic Infrastructure Provisioning with Terraform & Ansible',
+    summary: 'AWS EC2 infrastructure provisioned with Terraform, configured automatically through Ansible Dynamic Inventory \u2014 no static host list to maintain by hand.',
+    provider: 'AWS',
+    difficulty: 'Intermediate',
+    duration: 'Personal project',
+    featured: false,
+    tags: ['Terraform', 'Ansible', 'AWS EC2', 'Linux'],
+    github: 'https://github.com/mjulestek',
+    problem: 'A static Ansible inventory file falls out of date the moment infrastructure changes \u2014 a host gets added or removed in Terraform and the inventory doesn\u2019t know until someone remembers to update it by hand.',
+    solution: 'Provisioned EC2 infrastructure with Terraform, then used Ansible\u2019s Dynamic Inventory to discover hosts automatically based on AWS tags, removing the static inventory file entirely. Modular Ansible roles handle server hardening, user management, and Docker installation.',
+    architecture: 'Terraform provisions EC2 instances tagged consistently by role. Ansible\u2019s AWS dynamic inventory plugin queries those tags directly at run time, so the inventory always reflects exactly what Terraform has created.',
+    cicd: [
+      { stage: 'Provision', detail: 'terraform apply creates or updates EC2 instances with role-based tags.' },
+      { stage: 'Discover', detail: 'Ansible dynamic inventory queries AWS directly \u2014 no manual inventory file to update.' },
+      { stage: 'Configure', detail: 'Modular Ansible roles handle hardening, users, and Docker installation.' },
+      { stage: 'Deploy', detail: 'Docker Compose brings up multi-container applications on the configured hosts.' }
+    ],
+    infra: {
+      terraform: 'Provisions the EC2 instances and applies the AWS tags Ansible reads afterward.',
+      docker: 'Docker Compose deploys multi-container applications once hosts are configured.',
+      kubernetes: 'Not used \u2014 this project is specifically about VM-based provisioning, not container orchestration.',
+      networking: 'Standard EC2 networking, security groups scoped per role.',
+      security: 'Ansible roles include baseline Linux hardening as a standard step, not an afterthought.',
+      monitoring: 'Not the focus of this project.',
+      cost: 'EC2 instances sized minimally and stopped when not actively in use for testing.'
+    },
+    lessons: [
+      'Dynamic inventory removes an entire category of \u201cthe inventory file is stale\u201d bugs, at the cost of needing correct AWS tagging discipline instead.',
+      'Modular Ansible roles are worth the upfront structure \u2014 a single monolithic playbook gets unreadable fast.'
+    ],
+    future: [
+      'Add Ansible Vault for secrets instead of relying on environment variables alone.',
+      'Extend the same dynamic-inventory pattern to a second cloud provider to see how portable it really is.'
+    ],
+    gallery: 2
+  },
+  {
+    id: 'k8s-observability',
+    title: 'Kubernetes Observability & Monitoring Platform',
+    summary: 'A Prometheus, Grafana, and Alertmanager stack for Kubernetes, using the kube-prometheus-stack Helm chart to monitor cluster health and application performance.',
+    provider: 'AWS',
+    difficulty: 'Intermediate',
+    duration: 'Personal project',
+    featured: false,
+    tags: ['Kubernetes', 'Prometheus', 'Grafana', 'Helm'],
+    github: 'https://github.com/mjulestek',
+    problem: 'A Kubernetes cluster with no monitoring is a black box \u2014 deployments and scaling changes happen with no visibility into what actually happened to resource usage or application health afterward.',
+    solution: 'Deployed the kube-prometheus-stack via Helm, configuring Prometheus scraping and ServiceMonitors, Node Exporter for host-level metrics, Alertmanager for notifications, and Grafana dashboards covering cluster health, infrastructure metrics, and application performance.',
+    architecture: 'Prometheus scrapes metrics from cluster components and application pods via ServiceMonitors. Node Exporter runs as a DaemonSet for host-level metrics. Grafana queries Prometheus directly for dashboards, and Alertmanager routes alerts based on Prometheus rules.',
+    cicd: [
+      { stage: 'Install', detail: 'The kube-prometheus-stack Helm chart installs Prometheus, Grafana, and Alertmanager together.' },
+      { stage: 'Configure scraping', detail: 'ServiceMonitors are added per application to expose the right metrics.' },
+      { stage: 'Build dashboards', detail: 'Grafana dashboards are set up for cluster health and application performance.' },
+      { stage: 'Configure alerts', detail: 'Alertmanager rules are tuned toward real issues, not noise.' }
+    ],
+    infra: {
+      terraform: 'Not used for this project \u2014 the cluster itself comes from the EKS project above.',
+      docker: 'Prometheus, Grafana, and Alertmanager all run as containers via the Helm chart.',
+      kubernetes: 'The whole point of this project \u2014 DaemonSets, ServiceMonitors, and standard Kubernetes primitives throughout.',
+      networking: 'Grafana is exposed internally only; no public-facing dashboard by default.',
+      security: 'Default Grafana credentials changed immediately; RBAC scoped to the monitoring namespace.',
+      monitoring: 'This is the monitoring project \u2014 Prometheus and Grafana monitor the cluster that runs them, too.',
+      cost: 'Runs inside the existing EKS cluster \u2014 no separate infrastructure cost.'
+    },
+    lessons: [
+      'The kube-prometheus-stack chart bundles a lot by default \u2014 worth reading through what\u2019s actually enabled rather than accepting every default.',
+      'Alert rules that page on any threshold breach get noisy fast; tuning them down to genuinely actionable alerts took real iteration.'
+    ],
+    future: [
+      'Add Loki for log aggregation alongside the existing metrics stack.',
+      'Set up long-term metric storage instead of relying on Prometheus\u2019s default retention window.'
     ],
     gallery: 2
   }
@@ -262,7 +261,7 @@ function projectArt(project, seedIndex) {
 }
 
 function providerBadgeColor(provider) {
-  return { AWS: 'accent', GCP: 'amber', Azure: 'amber', 'Multi-cloud': '', 'On-prem': '' }[provider] || '';
+  return { AWS: 'accent', 'Self-hosted': 'amber' }[provider] || '';
 }
 
 function projectCard(project, index) {
