@@ -9,7 +9,7 @@ const PROJECTS = [
   {
     id: 'aws-portfolio-deployment',
     title: 'This Portfolio — AWS Static Site with Terraform & GitHub Actions',
-    summary: 'The site you\u2019re looking at right now: an S3 + CloudFront static site provisioned with Terraform and deployed by GitHub Actions, authenticated to AWS via OIDC with no stored credentials.',
+    summary: 'The site you\u2019re looking at right now \u2014 live at techworld-with-jules.com, deployed on AWS with Terraform and a working GitHub Actions CI/CD pipeline authenticated via OIDC, no stored AWS credentials anywhere.',
     provider: 'AWS',
     difficulty: 'Intermediate',
     duration: 'Ongoing',
@@ -17,7 +17,7 @@ const PROJECTS = [
     tags: ['Terraform', 'AWS', 'GitHub Actions', 'CloudFront', 'S3'],
     github: 'https://github.com/mjulestek/my-cloudpath-portfolio',
     problem: 'Most portfolio sites hide their own infrastructure behind a hosting dashboard. I wanted mine to double as proof of the skills it\u2019s advertising \u2014 provisioned as code and deployed through a real pipeline, not a few clicks in a control panel.',
-    solution: 'Built on a private S3 bucket behind CloudFront, provisioned entirely with Terraform. GitHub Actions runs two separate pipelines \u2014 one applies infrastructure changes only after a human approves the plan, the other deploys content automatically on every push \u2014 both authenticating to AWS via OIDC, with no access keys stored anywhere.',
+    solution: 'Built on a private S3 bucket behind CloudFront, provisioned entirely with Terraform. GitHub Actions runs two separate workflows \u2014 one applies infrastructure changes only after a human approves the plan, the other deploys content automatically on every push \u2014 both authenticating to AWS via OIDC, with no access keys stored anywhere. The contact form posts straight to Web3Forms and WhatsApp is a plain click-to-chat link, so neither needed a database or any extra AWS compute to add. The whole visual system \u2014 colors, type, the sharpened geometry \u2014 is a deliberate design token system built from scratch, not a theme.',
     architecture: 'A private S3 bucket holds the site files, reachable only through CloudFront using Origin Access Control \u2014 there is no public path to the bucket at all. TLS comes from an ACM certificate, DNS-validated by hand since the domain isn\u2019t on Route 53. Terraform state lives in a separate S3 bucket with native state locking, no DynamoDB table required.',
     cicd: [
       { stage: 'Push to main', detail: 'Any change under public/ triggers the deploy workflow automatically.' },
@@ -36,12 +36,14 @@ const PROJECTS = [
       cost: 'Pay-as-you-go S3 and CloudFront, no fixed server cost \u2014 a few dollars a month at this traffic level.'
     },
     lessons: [
-      'Terraform\u2019s S3 backend needs its state bucket to exist before it can use it \u2014 solved with a small, local-state \u201cbootstrap\u201d stack that only runs once.',
-      'A CloudFront distribution gets a brand-new domain name every time it\u2019s fully destroyed and recreated \u2014 DNS records need updating to match, easy to miss the first time.'
+      'A GitHub Actions OIDC token\u2019s subject claim isn\u2019t always the plain repo:org/repo:ref:branch format the AWS console wizard assumes \u2014 some accounts get an ID-suffixed version. Diagnosed by reading the literal token from CloudTrail rather than re-checking the trust policy a third time.',
+      'An IAM policy with a placeholder half-replaced \u2014 one bucket ARN fixed, one still literally &lt;bucket-name&gt; \u2014 produces a specific, confusing symptom: S3 ListBucket denied while PutObject still works fine. Worth a quick grep for a stray "&lt;" before saving any edited policy.',
+      'The Terraform state bucket and the site bucket ended up in genuinely different AWS regions \u2014 not a mistake, just how they were each set up. Needed a separate region variable once the backend config moved into CI, since one shared value couldn\u2019t correctly serve both.'
     ],
     future: [
+      'Wire the existing CloudFront access logs into a small dashboard instead of leaving them unused in S3.',
       'Add a staging environment before reusing this exact pattern on a second project.',
-      'Wire the existing CloudFront access logs into a small dashboard instead of leaving them unused in S3.'
+      'Bring back a real blog section once there\u2019s actual writing worth publishing \u2014 the placeholder posts got removed rather than shipped under my own name.'
     ],
     gallery: 2
   },
@@ -245,7 +247,7 @@ const PROJECTS = [
    rather than replaced with a synthetic substitute. */
 function projectArt(project, seedIndex) {
   if (project.id === 'aws-portfolio-deployment') {
-    return `<img src="assets/images/projects/aws-portfolio-architecture.jpg" alt="Architecture diagram for this deployment" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">`;
+    return `<img src="assets/images/projects/aws-portfolio-architecture.jpg" alt="Architecture diagram for this deployment" style="width:100%;height:100%;object-fit:contain;object-position:center;display:block;">`;
   }
   const palette = ['#D4954B', '#64707C', '#B87D42'];
   const color = palette[seedIndex % palette.length];
@@ -277,6 +279,7 @@ function projectCard(project, index) {
   <article class="card project-card reveal" style="--i:${index % 6}">
     <a href="project-details.html?id=${project.id}" class="project-media" aria-hidden="true">
       ${projectArt(project, index)}
+      ${project.id === 'aws-portfolio-deployment' ? '<span class="project-live-badge">Live</span>' : ''}
       <span class="project-provider">${project.provider}</span>
     </a>
     <div class="project-body">
@@ -375,11 +378,15 @@ function renderProjectDetails() {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
         <span>${project.title}</span>
       </div>
-      <div class="badge accent" style="margin-bottom:16px;">${project.provider}</div>
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+        <div class="badge accent">${project.provider}</div>
+        ${project.id === 'aws-portfolio-deployment' ? '<div class="badge success">Live &middot; deployed &amp; fully functioning</div>' : ''}
+      </div>
       <h1 class="reveal in-view" style="max-width:820px;">${project.title}</h1>
       <p style="max-width:640px;font-size:1.05rem;margin-top:16px;">${project.summary}</p>
       <div class="hero-actions" style="margin-top:28px;align-items:center;">
-        <a href="${project.github}" target="_blank" rel="noopener" class="btn btn-primary">View source on GitHub</a>
+        ${project.id === 'aws-portfolio-deployment' ? '<a href="https://techworld-with-jules.com/" target="_blank" rel="noopener" class="btn btn-primary">Visit live site &rarr;</a>' : ''}
+        <a href="${project.github}" target="_blank" rel="noopener" class="btn ${project.id === 'aws-portfolio-deployment' ? 'btn-secondary' : 'btn-primary'}">View source on GitHub</a>
         <a href="projects.html" class="btn btn-secondary">Back to all projects</a>
         ${project.id === 'aws-portfolio-deployment' ? '<a href="https://github.com/mjulestek/my-cloudpath-portfolio/actions/workflows/deploy.yml" target="_blank" rel="noopener"><img src="https://github.com/mjulestek/my-cloudpath-portfolio/actions/workflows/deploy.yml/badge.svg" alt="Deploy workflow status" height="28"></a>' : ''}
       </div>
@@ -412,7 +419,7 @@ function renderProjectDetails() {
         <div class="tab-panel" data-panel="architecture">
           <h3>Cloud architecture</h3>
           <p style="margin:14px 0;max-width:760px;">${project.architecture}</p>
-          ${project.id === 'aws-portfolio-deployment' ? '<img src="assets/images/projects/aws-portfolio-architecture.jpg" alt="Architecture diagram: developer pushes to GitHub, triggering an infra workflow and a deploy workflow, both authenticating to AWS via OIDC; the infra workflow manages IAM, S3 state and site buckets, and CloudFront with ACM; Namecheap DNS points to CloudFront; visitors reach the site over HTTPS" style="max-width:520px;width:100%;display:block;margin-top:20px;border-radius:var(--radius-lg);border:1px solid var(--border);">' : ''}
+          ${project.id === 'aws-portfolio-deployment' ? '<img src="assets/images/projects/aws-portfolio-architecture.jpg" alt="Architecture diagram: developer pushes to GitHub, triggering an infra workflow and a deploy workflow, both authenticating to AWS via OIDC; the infra workflow manages IAM, S3 state and site buckets, and CloudFront with ACM; Namecheap DNS points to CloudFront; visitors reach the site over HTTPS" style="max-width:600px;width:100%;display:block;margin-top:20px;border-radius:var(--radius-lg);border:1px solid var(--border);">' : ''}
         </div>
         <div class="tab-panel" data-panel="pipeline">
           <h3>CI/CD pipeline</h3>

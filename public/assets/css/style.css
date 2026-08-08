@@ -575,6 +575,28 @@ main { display: block; }
   font-weight: 600;
   color: var(--accent-dim);
 }
+.project-live-badge {
+  position: absolute;
+  top: 12px; left: 12px;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(124,148,115,0.92);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(124,148,115,0.4);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #F1EFEA;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.project-live-badge::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #F1EFEA;
+}
+.badge.success { color: #3F5C39; border-color: transparent; background: rgba(124,148,115,0.18); }
 .project-body { padding: 22px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
 .project-body h3 { font-size: 1.12rem; }
 .project-body h3 a:hover { color: var(--accent); }
