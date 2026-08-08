@@ -1,29 +1,3 @@
-#!/usr/bin/env bash
-#
-# Content deploy — render __SITE_DOMAIN__ -> sync to S3 -> invalidate
-# CloudFront. This is the SINGLE implementation of that logic in the repo:
-# .github/workflows/deploy.yml calls this same script rather than
-# reimplementing it, so there is exactly one place these three steps are
-# defined, not two copies that can silently drift apart.
-#
-# Two calling contexts:
-#   1. Manual (you, in a terminal) — SITE_BUCKET / CLOUDFRONT_DISTRIBUTION_ID
-#      / SITE_DOMAIN are not set, so this script reads them live from
-#      Terraform output.
-#   2. GitHub Actions (.github/workflows/deploy.yml) — those three are
-#      already set as environment variables (from repository variables,
-#      see docs Phase 7.5) before this script runs, so it uses them
-#      directly and skips the Terraform lookup entirely. This matters
-#      beyond convenience: the deploy workflow's IAM role
-#      (github-actions-deploy-role) deliberately has no permission to read
-#      the Terraform state bucket (see docs Phase 7.3) — if this script
-#      always shelled out to `terraform output`, it would fail under that
-#      role. Skipping the lookup when the values are already known keeps
-#      the deploy workflow within its intentionally narrow permissions.
-#
-# Run from ANYWHERE — it locates the repo root from its own file location,
-# so `cd`ing into the wrong directory first (e.g. terraform/environments/prod)
-# can't break it the way a raw `aws s3 sync public/ ...` command can.
 
 set -euo pipefail
 

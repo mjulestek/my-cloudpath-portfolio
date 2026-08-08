@@ -1,21 +1,5 @@
-# Infra workflow — mirrors the discipline of the old Jenkinsfile.infra:
-# always plan, only apply/destroy after a human approves. The approval gate
-# here is GitHub's own "environment protection rule" (Phase 7.4) — a job
-# that targets `environment: production` pauses and waits for a required
-# reviewer before it runs, the same concept as Jenkins's Proceed/Abort step.
-#
-# Manual trigger only (workflow_dispatch) — infra changes should never run
-# automatically on a push, same reasoning as before.
-#
-# terraform.tfvars and backend-prod.hcl are NEVER committed to this repo —
-# see docs/DEPLOYMENT_GUIDE.md Phase 7.5. Each job below generates both
-# files fresh from repository Variables before running Terraform. This is
-# the same principle already used for scripts/deploy-content.sh's
-# SITE_BUCKET/etc: real values live in Settings (visible only to repo
-# collaborators), never in the file tree (visible to anyone, forever, if
-# this repo is public).
 
-name: Infra (Terraform)
+name: Infra provisioning (Terraform)
 
 on:
   workflow_dispatch:
@@ -30,8 +14,7 @@ on:
           - apply
           - destroy
 
-# Required for OIDC — lets this workflow request a short-lived AWS token.
-# No AWS secret is stored anywhere in this repo.
+
 permissions:
   id-token: write
   contents: read
@@ -47,7 +30,7 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.10.5" # match your local `terraform version` (Phase 0.2)
+          terraform_version: "1.10.5"
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -91,7 +74,7 @@ jobs:
     needs: plan
     if: ${{ github.event.inputs.action == 'apply' }}
     runs-on: ubuntu-latest
-    environment: production # <-- this line is the approval gate, see Phase 7.4
+    environment: production 
     defaults:
       run:
         working-directory: terraform/environments/prod
@@ -131,9 +114,7 @@ jobs:
           echo "--- Generated terraform.tfvars ---"
           cat terraform.tfvars
 
-      # Re-running init is required — this is a fresh runner with no state
-      # from the plan job. The downloaded tfplan file guarantees apply runs
-      # against exactly what was reviewed, not a freshly recomputed plan.
+
       - run: terraform init -backend-config=backend-prod.hcl
 
       - run: terraform apply -input=false tfplan

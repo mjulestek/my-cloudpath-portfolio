@@ -1,18 +1,4 @@
-###############################################################################
-# BOOTSTRAP STACK
-#
-# This creates the S3 bucket used to store Terraform state for the MAIN
-# stack (terraform/environments/prod). State locking is handled natively by
-# the S3 backend itself (use_lockfile = true in backend-prod.hcl, Terraform
-# >= 1.10) — no separate lock table needed.
-#
-# This stack intentionally uses LOCAL state, not remote state — you can't
-# store this stack's state in a bucket that doesn't exist yet (chicken/egg).
-#
-# Run this ONCE per AWS account/environment. After it succeeds, commit the
-# generated terraform.tfstate is fine to keep local/private (or move it to
-# an existing "ops" bucket later) — it rarely needs to change again.
-###############################################################################
+
 
 terraform {
   required_version = ">= 1.6.0"
