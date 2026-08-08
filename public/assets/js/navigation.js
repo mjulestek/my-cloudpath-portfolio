@@ -29,7 +29,7 @@
   };
 
   function brand() {
-    return '<a href="index.html" class="nav-brand"><span class="brand-mark">J</span>ules Munyaneza</a>';
+    return '<a href="/" class="nav-brand"><span class="brand-mark">J</span>ules Munyaneza</a>';
   }
 
   function renderStatusStrip() {

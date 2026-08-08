@@ -96,7 +96,7 @@
 .route-loader.hidden { opacity: 0; visibility: hidden; }
 .route-loader .loader-mark {
   width: 36px; height: 36px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   border: 2px solid var(--border-strong);
   border-top-color: var(--accent);
   animation: spin-slow 0.8s linear infinite;

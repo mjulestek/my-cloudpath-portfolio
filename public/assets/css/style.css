@@ -9,40 +9,47 @@
    ============================================================ */
 
 :root {
-  /* ---- Color tokens ---- */
-  --bg: #ffffff;
-  --bg-elevated: #ffffff;
-  --bg-soft: #eaf6ee;          /* mint section band (hero / CTA) */
-  --surface: #ffffff;
-  --surface-hover: #f4faf5;
-  --border: #e6ece7;
-  --border-strong: #d4ddd6;
+  /* ---- Color tokens: "Precision Instrument" — gunmetal + brass ----
+     A deliberate departure from the generic near-black + acid-accent
+     look. Brass carries warmth and craft; steel is the cool, quiet
+     counterweight used sparingly so brass stays the one accent that
+     pops (never two competing accents at once). Light mode is warm
+     parchment, not stark white — closer to technical drawing paper
+     than a blank document. */
+  --bg: #F3EFE7;
+  --bg-elevated: #FBF9F5;
+  --bg-soft: #ECE4D2;           /* warm tan band — hero / CTA sections */
+  --surface: #FBF9F5;
+  --surface-hover: #F5EFE3;
+  --border: #DED5C2;
+  --border-strong: #C9BCA0;
 
-  --text-primary: #14181a;
-  --text-secondary: #5c6b62;
-  --text-tertiary: #8d9a92;
+  --text-primary: #1B1A17;
+  --text-secondary: #5B564C;
+  --text-tertiary: #8C8577;
 
-  --accent: #1e9e5c;           /* forest green — primary */
-  --accent-dim: #167a47;
-  --accent-amber: #f5a623;     /* gold — secondary / decorative */
-  --accent-rose: #e14f4f;
-  --accent-violet: #f5a623;    /* alias kept for gradient pairs; see note above */
+  --accent: #8B5A2B;            /* bronze — primary, light-mode contrast tuned */
+  --accent-dim: #6E4620;
+  --accent-amber: #64707C;      /* steel — secondary / decorative counterweight */
+  --accent-rose: #A8432E;       /* rust — errors; corrosion-on-metal is the metaphor */
+  --accent-violet: #64707C;     /* alias kept for gradient pairs; mirrors steel */
 
-  --accent-rgb: 30, 158, 92;
-  --amber-rgb: 245, 166, 35;
+  --accent-rgb: 139, 90, 43;
+  --amber-rgb: 100, 112, 124;
 
-  --font-display: 'Poppins', 'Inter', sans-serif;
+  --font-display: 'Big Shoulders', 'Archivo', sans-serif;
+  --font-heading: 'Archivo', 'Inter', sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
 
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-full: 999px;
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 8px;
+  --radius-full: 4px;           /* deliberately NOT a pill anymore — see note above */
 
-  --shadow-sm: 0 1px 2px rgba(20,40,30,0.05);
-  --shadow-md: 0 12px 28px rgba(20,45,32,0.08);
-  --shadow-lg: 0 28px 64px rgba(20,45,32,0.14);
+  --shadow-sm: 0 1px 2px rgba(27,26,23,0.06);
+  --shadow-md: 0 12px 28px rgba(27,26,23,0.09);
+  --shadow-lg: 0 28px 64px rgba(27,26,23,0.16);
   --shadow-glow: 0 0 0 1px rgba(var(--accent-rgb), 0.16), 0 10px 30px rgba(var(--accent-rgb), 0.14);
 
   --container: 1180px;
@@ -128,21 +135,37 @@ input, textarea, select { font: inherit; color: inherit; }
   position: absolute;
   left: 2px; right: 2px; bottom: -0.06em;
   height: 9px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='9' viewBox='0 0 24 9'%3E%3Cpath d='M0.5 5.5 Q4 1 8 5.5 T16 5.5 T23.5 5.5' fill='none' stroke='%231e9e5c' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='9' viewBox='0 0 24 9'%3E%3Cpath d='M1.5 2 V8 M1.5 5 H22.5 M22.5 2 V8' fill='none' stroke='%238B5A2B' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: repeat-x;
   background-size: 24px 9px;
 }
+html[data-theme="dark"] .hl::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='9' viewBox='0 0 24 9'%3E%3Cpath d='M1.5 2 V8 M1.5 5 H22.5 M22.5 2 V8' fill='none' stroke='%23D4954B' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+}
 
-/* ---- Typography ---- */
-h1, h2, h3, h4 {
+/* ---- Typography ----
+   Big Shoulders carries the big, characterful moments only (h1) — an
+   industrial, condensed grotesque with real weight, used with
+   restraint rather than everywhere. h2-h4 use Archivo, a steadier
+   grotesque that still reads confident at heading sizes without
+   competing with h1 for attention. */
+h1 {
   font-family: var(--font-display);
-  font-weight: 600;
-  line-height: 1.15;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  text-transform: none;
+}
+h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.2;
   letter-spacing: -0.01em;
   color: var(--text-primary);
 }
 
-h1 { font-size: clamp(2.3rem, 4.4vw, 3.9rem); }
+h1 { font-size: clamp(2.5rem, 4.8vw, 4.4rem); }
 h2 { font-size: clamp(1.85rem, 3vw, 2.5rem); }
 h3 { font-size: clamp(1.25rem, 2vw, 1.5rem); }
 h4 { font-size: 1.08rem; }
@@ -248,7 +271,7 @@ main { display: block; }
   color: var(--text-secondary);
 }
 .badge.accent { color: var(--accent-dim); border-color: transparent; background: rgba(var(--accent-rgb), 0.1); }
-.badge.amber { color: #9c6b0c; border-color: transparent; background: rgba(var(--amber-rgb), 0.14); }
+.badge.amber { color: #3E4A54; border-color: transparent; background: rgba(var(--amber-rgb), 0.14); }
 
 /* ---- Cards ---- */
 .card {
@@ -273,11 +296,11 @@ main { display: block; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #12181a;
-  border-bottom: 1px solid #12181a;
+  background: #0E1013;
+  border-bottom: 1px solid #0E1013;
   font-family: var(--font-body);
   font-size: 0.78rem;
-  color: #aab6ae;
+  color: #9098A0;
   letter-spacing: 0.01em;
   gap: 10px;
 }
@@ -319,7 +342,7 @@ main { display: block; }
   display: flex;
   align-items: center;
   gap: 0;
-  font-family: var(--font-display);
+  font-family: var(--font-heading);
   font-weight: 700;
   font-size: 1.1rem;
   color: var(--text-primary);
@@ -389,8 +412,8 @@ main { display: block; }
 
 /* Terminal — the one deliberate dark accent card in an otherwise light system */
 .terminal {
-  background: #0d1117;
-  border: 1px solid #1c2129;
+  background: #0E1013;
+  border: 1px solid #2A2D33;
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-lg);
@@ -400,14 +423,14 @@ main { display: block; }
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  background: #11161f;
-  border-bottom: 1px solid #1c2129;
+  background: #121418;
+  border-bottom: 1px solid #2A2D33;
 }
 .terminal-dot { width: 11px; height: 11px; border-radius: 50%; }
-.terminal-dot.r { background: #ef6a6a; }
-.terminal-dot.y { background: #f5a623; }
-.terminal-dot.g { background: #4fd1c5; }
-.terminal-title { margin-left: 8px; font-family: var(--font-mono); font-size: 0.75rem; color: #6b7681; }
+.terminal-dot.r { background: #A8432E; }
+.terminal-dot.y { background: #D4954B; }
+.terminal-dot.g { background: #7C9473; }
+.terminal-title { margin-left: 8px; font-family: var(--font-mono); font-size: 0.75rem; color: #6E7680; }
 .terminal-body {
   padding: 22px 20px;
   font-family: var(--font-mono);
@@ -415,15 +438,15 @@ main { display: block; }
   line-height: 1.85;
   min-height: 280px;
 }
-.terminal-body .prompt { color: #4fd1c5; }
-.terminal-body .path { color: #b9a6f5; }
-.terminal-line { color: #9aa5b1; white-space: pre-wrap; word-break: break-word; }
-.terminal-line .ok { color: #4fd1c5; }
-.terminal-line .warn { color: #f5a623; }
+.terminal-body .prompt { color: #D4954B; }
+.terminal-body .path { color: #8A93A0; }
+.terminal-line { color: #A3A6AB; white-space: pre-wrap; word-break: break-word; }
+.terminal-line .ok { color: #7C9473; }
+.terminal-line .warn { color: #D4954B; }
 .terminal-cursor {
   display: inline-block;
   width: 8px; height: 16px;
-  background: #4fd1c5;
+  background: #D4954B;
   vertical-align: middle;
   animation: blink 1s steps(1) infinite;
 }
@@ -531,7 +554,7 @@ main { display: block; }
 .project-media {
   display: block;
   aspect-ratio: 16/10;
-  background: linear-gradient(135deg, #f2f9f4, #eaf6ee);
+  background: linear-gradient(135deg, #16181C, #1B1E22);
   position: relative;
   overflow: hidden;
   border-bottom: 1px solid var(--border);
@@ -679,7 +702,7 @@ main { display: block; }
   justify-content: space-between;
   padding: 20px 4px;
   text-align: left;
-  font-family: var(--font-display);
+  font-family: var(--font-heading);
   font-size: 1rem;
   color: var(--text-primary);
 }
@@ -859,14 +882,14 @@ main { display: block; }
 .blog-post-body h2 { margin: 44px 0 16px; scroll-margin-top: 120px; }
 .blog-post-body p { margin-bottom: 18px; font-size: 1.02rem; line-height: 1.75; color: var(--text-secondary); }
 .code-block {
-  background: #0d1117;
-  border: 1px solid #1c2129;
+  background: #0E1013;
+  border: 1px solid #2A2D33;
   border-radius: var(--radius-md);
   padding: 20px 22px;
   overflow-x: auto;
   margin: 8px 0 26px;
 }
-.code-block code { font-family: var(--font-mono); font-size: 0.86rem; color: #a6e3d8; line-height: 1.7; }
+.code-block code { font-family: var(--font-mono); font-size: 0.86rem; color: #C4A576; line-height: 1.7; }
 
 /* ============================================================
    CONTACT FORM
@@ -893,8 +916,8 @@ main { display: block; }
    ============================================================ */
 .cert-card { padding: 24px; display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center; }
 .cert-badge-img { width: 100%; max-width: 230px; height: 230px; object-fit: contain; margin: 0 auto 4px; display: block; }
-.cert-icon { width: 46px; height: 46px; border-radius: 13px; background: linear-gradient(135deg, var(--accent), var(--accent-amber)); display: flex; align-items: center; justify-content: center; color: #ffffff; font-family: var(--font-display); font-weight: 700; font-size: 0.85rem; }
-.cert-icon.amber { background: linear-gradient(135deg, var(--accent-amber), #e08a1c); }
+.cert-icon { width: 46px; height: 46px; border-radius: 13px; background: linear-gradient(135deg, var(--accent), var(--accent-amber)); display: flex; align-items: center; justify-content: center; color: #ffffff; font-family: var(--font-heading); font-weight: 700; font-size: 0.85rem; }
+.cert-icon.amber { background: linear-gradient(135deg, var(--accent-amber), #4E5860); }
 .cert-card h4 { font-size: 1.05rem; }
 .cert-issuer { font-size: 0.85rem; color: var(--text-tertiary); }
 .cert-date-row { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--accent-dim); font-weight: 600; margin-top: 4px; }
@@ -925,22 +948,31 @@ main { display: block; }
    Same brand accents (forest green + gold), inverted surfaces.
    ============================================================ */
 html[data-theme="dark"] {
-  --bg: #0e1512;
-  --bg-elevated: #141d18;
-  --bg-soft: #101a15;
-  --surface: #141d18;
-  --surface-hover: #1a251f;
-  --border: #223028;
-  --border-strong: #2c3d33;
-  --text-primary: #eef4f0;
-  --text-secondary: #a3b3ab;
-  --text-tertiary: #6d7d75;
+  --bg: #0E1013;
+  --bg-elevated: #16181C;
+  --bg-soft: #1B1E22;
+  --surface: #16181C;
+  --surface-hover: #1D2024;
+  --border: #2A2D33;
+  --border-strong: #383C43;
+  --text-primary: #F1EFEA;
+  --text-secondary: #A3A6AB;
+  --text-tertiary: #6E7680;
+
+  /* Brass reads lighter/warmer on dark bg than the bronze used for
+     light mode — same hue family, lightness tuned per-background so
+     both stay comfortably above WCAG AA rather than sharing one value
+     that only really works on one of the two backgrounds. */
+  --accent: #D4954B;
+  --accent-dim: #B87D42;
+  --accent-rgb: 212, 149, 75;
+
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
   --shadow-md: 0 12px 28px rgba(0,0,0,0.35);
   --shadow-lg: 0 28px 64px rgba(0,0,0,0.5);
 }
-html[data-theme="dark"] .site-nav { background: rgba(14,21,18,0.82); }
-html[data-theme="dark"] .site-nav.scrolled { background: rgba(14,21,18,0.96); }
-html[data-theme="dark"] .project-media { background: linear-gradient(135deg, #141d18, #101a15); }
-html[data-theme="dark"] .project-provider { background: rgba(14,21,18,0.85); color: var(--accent); }
-html[data-theme="dark"] [data-tooltip]::after { background: #ffffff; color: #0e1512; }
+html[data-theme="dark"] .site-nav { background: rgba(14,16,19,0.82); }
+html[data-theme="dark"] .site-nav.scrolled { background: rgba(14,16,19,0.96); }
+html[data-theme="dark"] .project-media { background: linear-gradient(135deg, #16181C, #1B1E22); }
+html[data-theme="dark"] .project-provider { background: rgba(14,16,19,0.85); color: var(--accent); }
+html[data-theme="dark"] [data-tooltip]::after { background: #ffffff; color: #0E1013; }

@@ -237,9 +237,12 @@ const PROJECTS = [
   }
 ];
 
-/* ---- Deterministic topology art per project (signature visual motif) ---- */
+/* ---- Deterministic topology art per project (signature visual motif) ----
+   Always renders on a dark "blueprint" panel regardless of site theme —
+   same intentional choice as the terminal staying dark in light mode,
+   reinforcing the schematic/engineering-drawing motif. */
 function projectArt(project, seedIndex) {
-  const palette = ['#1e9e5c', '#f5a623', '#167a47'];
+  const palette = ['#D4954B', '#64707C', '#B87D42'];
   const color = palette[seedIndex % palette.length];
   let seed = 0;
   for (const ch of project.id) seed += ch.charCodeAt(0);
@@ -252,10 +255,10 @@ function projectArt(project, seedIndex) {
   const edges = [[0,1],[1,2],[2,3],[3,4],[1,4],[4,5],[0,3]];
 
   const lines = edges.map(([a,b]) => `<line x1="${nodes[a].x}" y1="${nodes[a].y}" x2="${nodes[b].x}" y2="${nodes[b].y}" stroke="${color}" stroke-opacity="0.4" stroke-width="1.6"/>`).join('');
-  const dots = nodes.map((n, i) => `<circle cx="${n.x}" cy="${n.y}" r="${i === 0 ? 6 : 4}" fill="${i === 0 ? color : '#ffffff'}" stroke="${color}" stroke-width="1.8"/>`).join('');
+  const dots = nodes.map((n, i) => `<circle cx="${n.x}" cy="${n.y}" r="${i === 0 ? 6 : 4}" fill="${i === 0 ? color : '#F1EFEA'}" stroke="${color}" stroke-width="1.8"/>`).join('');
 
   return `<svg viewBox="0 0 300 190" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-    <rect width="300" height="190" fill="#f2f9f4"/>
+    <rect width="300" height="190" fill="#16181C"/>
     <g>${lines}${dots}</g>
   </svg>`;
 }
@@ -361,7 +364,7 @@ function renderProjectDetails() {
     <div class="page-hero container band-soft" style="border-radius:0 0 32px 32px;">
       <div class="dot-cluster" style="top:20px; right:6%;"></div>
       <div class="breadcrumbs" id="breadcrumbNav">
-        <a href="index.html">Home</a>
+        <a href="/">Home</a>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
         <a href="projects.html">Projects</a>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>

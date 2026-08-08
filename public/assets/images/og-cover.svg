@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#eaf6ee"/>
-  <text x="80" y="200" font-family="Arial, sans-serif" font-weight="700" font-size="64" fill="#14181a"><tspan fill="#1e9e5c">J</tspan>ules Munyaneza</text>
-  <text x="80" y="260" font-family="Arial, sans-serif" font-size="30" fill="#5c6b62">DevOps &amp; Cloud Engineer Portfolio</text>
-  <text x="80" y="320" font-family="Arial, sans-serif" font-weight="600" font-size="22" fill="#167a47">AWS · Kubernetes · Terraform · Docker · CI/CD</text>
+  <rect width="1200" height="630" fill="#0E1013"/>
+  <text x="80" y="200" font-family="Arial, sans-serif" font-weight="700" font-size="64" fill="#F1EFEA"><tspan fill="#D4954B">J</tspan>ules Munyaneza</text>
+  <text x="80" y="260" font-family="Arial, sans-serif" font-size="30" fill="#A3A6AB">DevOps &amp; Cloud Engineer Portfolio</text>
+  <text x="80" y="320" font-family="Arial, sans-serif" font-weight="600" font-size="22" fill="#D4954B">AWS · Kubernetes · Terraform · Docker · CI/CD</text>
 </svg>
