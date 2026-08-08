@@ -938,6 +938,9 @@ main { display: block; }
    ============================================================ */
 .cert-card { padding: 24px; display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center; }
 .cert-badge-img { width: 100%; max-width: 230px; height: 230px; object-fit: contain; margin: 0 auto 4px; display: block; }
+.cert-card.pending { border-style: dashed; }
+.cert-card.pending .cert-badge-img { opacity: 0.4; filter: grayscale(1); }
+.cert-card.pending .cert-date-row { color: var(--text-tertiary); }
 .cert-icon { width: 46px; height: 46px; border-radius: 13px; background: linear-gradient(135deg, var(--accent), var(--accent-amber)); display: flex; align-items: center; justify-content: center; color: #ffffff; font-family: var(--font-heading); font-weight: 700; font-size: 0.85rem; }
 .cert-icon.amber { background: linear-gradient(135deg, var(--accent-amber), #4E5860); }
 .cert-card h4 { font-size: 1.05rem; }

@@ -361,12 +361,38 @@ function renderProjectDetails() {
   const id = params.get('id');
   const project = PROJECTS.find(p => p.id === id) || PROJECTS[0];
   const index = PROJECTS.findIndex(p => p.id === project.id);
+  const isLive = project.id === 'aws-portfolio-deployment';
 
   document.title = `${project.title} \u2014 Jules Munyaneza`;
   const metaDesc = document.querySelector('meta[name="description"]');
-  if (metaDesc) metaDesc.setAttribute('content', project.summary);
+  if (metaDesc) metaDesc.setAttribute('content', isLive ? project.summary : `${project.title} \u2014 case study coming soon.`);
 
   document.getElementById('breadcrumbCurrent').textContent = project.title;
+
+  if (!isLive) {
+    wrap.innerHTML = `
+    <div class="page-hero container band-soft" style="border-radius:0 0 8px 8px;">
+      <div class="dot-cluster" style="top:20px; right:6%;"></div>
+      <div class="breadcrumbs" id="breadcrumbNav">
+        <a href="/">Home</a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        <a href="projects.html">Projects</a>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        <span>${project.title}</span>
+      </div>
+      <div class="badge accent" style="margin-bottom:16px;">${project.provider}</div>
+      <h1 style="max-width:820px;">${project.title}</h1>
+    </div>
+    <section class="section-tight container">
+      <div class="card reveal" style="padding:64px;text-align:center;">
+        <h2>Coming soon</h2>
+        <p style="margin:14px auto 24px;max-width:480px;">The full write-up for this project isn\u2019t published yet.</p>
+        <a href="projects.html" class="btn btn-primary">Back to all projects</a>
+      </div>
+    </section>`;
+    document.dispatchEvent(new Event('cp:content-mounted'));
+    return;
+  }
 
   wrap.innerHTML = `
     <div class="page-hero container band-soft" style="border-radius:0 0 8px 8px;">
@@ -380,15 +406,15 @@ function renderProjectDetails() {
       </div>
       <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
         <div class="badge accent">${project.provider}</div>
-        ${project.id === 'aws-portfolio-deployment' ? '<div class="badge success">Live &middot; deployed &amp; fully functioning</div>' : ''}
+        <div class="badge success">Live &middot; deployed &amp; fully functioning</div>
       </div>
       <h1 class="reveal in-view" style="max-width:820px;">${project.title}</h1>
       <p style="max-width:640px;font-size:1.05rem;margin-top:16px;">${project.summary}</p>
       <div class="hero-actions" style="margin-top:28px;align-items:center;">
-        ${project.id === 'aws-portfolio-deployment' ? '<a href="https://techworld-with-jules.com/" target="_blank" rel="noopener" class="btn btn-primary">Visit live site &rarr;</a>' : ''}
-        <a href="${project.github}" target="_blank" rel="noopener" class="btn ${project.id === 'aws-portfolio-deployment' ? 'btn-secondary' : 'btn-primary'}">View source on GitHub</a>
+        <a href="https://techworld-with-jules.com/" target="_blank" rel="noopener" class="btn btn-primary">Visit live site &rarr;</a>
+        <a href="${project.github}" target="_blank" rel="noopener" class="btn btn-secondary">View source on GitHub</a>
         <a href="projects.html" class="btn btn-secondary">Back to all projects</a>
-        ${project.id === 'aws-portfolio-deployment' ? '<a href="https://github.com/mjulestek/my-cloudpath-portfolio/actions/workflows/deploy.yml" target="_blank" rel="noopener"><img src="https://github.com/mjulestek/my-cloudpath-portfolio/actions/workflows/deploy.yml/badge.svg" alt="Deploy workflow status" height="28"></a>' : ''}
+        <a href="https://github.com/mjulestek/my-cloudpath-portfolio/actions/workflows/deploy.yml" target="_blank" rel="noopener"><img src="https://github.com/mjulestek/my-cloudpath-portfolio/actions/workflows/deploy.yml/badge.svg" alt="Deploy workflow status" height="28"></a>
       </div>
       <div class="project-tags" style="margin-top:24px;">
         ${project.tags.map(t => `<span class="badge">${t}</span>`).join('')}
@@ -419,7 +445,7 @@ function renderProjectDetails() {
         <div class="tab-panel" data-panel="architecture">
           <h3>Cloud architecture</h3>
           <p style="margin:14px 0;max-width:760px;">${project.architecture}</p>
-          ${project.id === 'aws-portfolio-deployment' ? '<img src="assets/images/projects/aws-portfolio-architecture.jpg" alt="Architecture diagram: developer pushes to GitHub, triggering an infra workflow and a deploy workflow, both authenticating to AWS via OIDC; the infra workflow manages IAM, S3 state and site buckets, and CloudFront with ACM; Namecheap DNS points to CloudFront; visitors reach the site over HTTPS" style="max-width:600px;width:100%;display:block;margin-top:20px;border-radius:var(--radius-lg);border:1px solid var(--border);">' : ''}
+          <img src="assets/images/projects/aws-portfolio-architecture.jpg" alt="Architecture diagram: developer pushes to GitHub, triggering an infra workflow and a deploy workflow, both authenticating to AWS via OIDC; the infra workflow manages IAM, S3 state and site buckets, and CloudFront with ACM; Namecheap DNS points to CloudFront; visitors reach the site over HTTPS" style="max-width:600px;width:100%;display:block;margin-top:20px;border-radius:var(--radius-lg);border:1px solid var(--border);">
         </div>
         <div class="tab-panel" data-panel="pipeline">
           <h3>CI/CD pipeline</h3>
@@ -456,10 +482,14 @@ function renderProjectDetails() {
     </section>
 
     <section class="section-tight container">
-      <div class="section-head"><span class="eyebrow">Gallery</span><h2>Screens &amp; diagrams</h2></div>
+      <div class="section-head"><span class="eyebrow">Gallery</span><h2>Screens &amp; deploy history</h2></div>
       <div class="project-grid">
-        ${Array.from({ length: project.gallery }).map((_, i) => `
-          <div class="card project-media reveal" style="aspect-ratio:16/10;">${projectArt(project, index + i + 1)}</div>`).join('')}
+        <div class="card project-media reveal" style="aspect-ratio:16/10;">
+          <img src="assets/images/projects/site-screenshot.png" alt="The live site at techworld-with-jules.com" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
+        </div>
+        <div class="card project-media reveal" style="aspect-ratio:16/10;">
+          <img src="assets/images/projects/github-actions-history.png" alt="GitHub Actions workflow run history, showing successful deploy and infra provisioning runs" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
+        </div>
       </div>
     </section>
 
