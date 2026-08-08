@@ -13,6 +13,7 @@ tfplan
 backend-prod.hcl
 backend-*.hcl
 !backend-prod.hcl.example
+portfolio-deploy-guide.html
 
 
 /build/

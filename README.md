@@ -1,69 +1,38 @@
-# Static Site on AWS — S3 + CloudFront + ACM
+# CloudPath Portfolio
 
-Stack: Git · GitHub · GitHub Actions · Terraform · S3 · CloudFront · ACM.
+A personal portfolio site, deployed to AWS with a real CI/CD pipeline — Terraform for infrastructure, GitHub Actions for deployment. No servers to babysit, no AWS keys sitting in GitHub.
 
-Full runbook, in two parts — **Part I: Infrastructure Provisioning** (one-time, produces a live HTTPS site) and **Part II: Deployment & CI/CD** (GitHub Actions, OIDC-authenticated, no server to run) — with the reasoning behind every step: **[docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md)**.
+[![Deploy](https://github.com/<org>/<repo>/actions/workflows/deploy.yml/badge.svg)](https://github.com/<org>/<repo>/actions/workflows/deploy.yml)
 
-## Repo layout
+**Stack:** Git · GitHub · GitHub Actions · Terraform · S3 · CloudFront · ACM
 
-```
-.
-├── public/                        # CloudPath portfolio site (HTML/CSS/JS, no build step)
-│   ├── assets/{css,js,images}/
-│   ├── data/                      # portable JSON mirror of projects/blog/certs
-│   └── *.html                     # domain refs use __SITE_DOMAIN__ (rendered at deploy time)
-├── terraform/
-│   ├── bootstrap/                 # one-time: state bucket only (native S3 locking, no lock table)
-│   └── environments/
-│       └── prod/                  # all resources defined directly here (no module layer)
-├── .github/
-│   └── workflows/
-│       ├── infra.yml              # terraform plan → approve (GitHub Environment) → apply
-│       └── deploy.yml             # calls scripts/deploy-content.sh on every push to main
-├── scripts/
-│   └── deploy-content.sh          # single implementation: render __SITE_DOMAIN__ → s3 sync → cloudfront invalidation
-└── docs/
-    ├── DEPLOYMENT_GUIDE.md        # full phased runbook
-    └── PORTFOLIO_DESIGN_NOTES.md  # content-editing guide, design tokens
-```
+## How it works
 
-## Before you deploy
+- `public/` — the site itself. Plain HTML/CSS/JS, no build step.
+- `terraform/` — the AWS infrastructure, as code: a private S3 bucket, CloudFront in front of it, the Terraform state backend.
+- `.github/workflows/` — two pipelines. One deploys content on every push to `main`. The other applies infrastructure changes, but only after a human approves the plan.
+- `scripts/deploy-content.sh` — the actual deploy logic. The pipeline calls it, but you can run it yourself too.
+- AWS auth happens via OIDC. No access keys stored anywhere, ever.
 
-Two placeholders in `public/` need your real info — contact email (currently `hello@cloudpath.dev`, in `assets/js/main.js` and `assets/js/navigation.js`) and name/bio/resume content (`index.html`, `about.html`, `resume.html`, `assets/resume.pdf`). Everything else (domain in canonical/OG tags, `robots.txt`, `sitemap.xml`) is templated as `__SITE_DOMAIN__` and filled in automatically by the deploy workflow — see `docs/DEPLOYMENT_GUIDE.md` Appendix D.
+## Setting this up yourself
 
-## Quickstart
+Everything — every click, every command, every mistake made along the way and how to avoid it — is in [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md). Start there.
 
-```bash
-# Phase 0 — install Git, Terraform >=1.10, AWS CLI; create an IAM user; `aws configure`
+Rough shape of it:
 
-# PART I — INFRASTRUCTURE PROVISIONING
+1. Install Git, Terraform, the AWS CLI.
+2. Bootstrap a Terraform state bucket.
+3. Get an ACM certificate — manual, one-time, through the AWS console.
+4. `terraform apply` the actual infrastructure.
+5. Point your domain at CloudFront.
+6. Wire up GitHub Actions — OIDC trust, two scoped IAM roles, a few repo variables.
+7. Push.
 
-# Phase 1 — create + push the GitHub repo
-git init && git add . && git commit -m "chore: initial project scaffold"
+## Using this as your own template
 
-# Phase 2 — bootstrap the Terraform state backend (once)
-cd terraform/bootstrap && terraform init && terraform apply
+Two things in `public/` are still placeholders:
 
-# Phase 3 — create + DNS-validate your ACM certificate manually in the
-# AWS console (see docs/DEPLOYMENT_GUIDE.md) — Terraform doesn't create
-# certificates in this project, it just references one by ARN
+- Contact email — `assets/js/main.js`, `assets/js/navigation.js`
+- Name, bio, resume — `index.html`, `about.html`, `resume.html`, `assets/resume.pdf`
 
-# Phase 4 — provision core infra
-cd terraform/environments/prod
-terraform init -backend-config=backend-prod.hcl
-# set acm_certificate_arn (and the rest) in terraform.tfvars first
-terraform apply
-
-# Phase 5 — point domain at CloudFront (manual, in Namecheap)
-terraform output cloudfront_domain_name
-
-# Phase 6 (optional) — deploy content manually, before Actions exists
-./scripts/deploy-content.sh
-
-# PART II — DEPLOYMENT & CI/CD
-
-# Phase 7 — set up OIDC trust, IAM roles, repo variables, push the
-# workflow files in .github/workflows/ — no server, no static AWS keys
-```
-
-See `docs/DEPLOYMENT_GUIDE.md` for the full explanation of each step, troubleshooting, security notes, and teardown.
+Swap those in. Your real domain gets filled in automatically at deploy time — nothing else to touch.
