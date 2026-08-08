@@ -2,9 +2,13 @@
 
 A personal portfolio site, deployed to AWS with a real CI/CD pipeline — Terraform for infrastructure, GitHub Actions for deployment. No servers to babysit, no AWS keys sitting in GitHub.
 
-[![Deploy](https://github.com/<org>/<repo>/actions/workflows/deploy.yml/badge.svg)](https://github.com/<org>/<repo>/actions/workflows/deploy.yml)
+[![Deploy](https://github.com/mjulestek/my-cloudpath-portfolio/actions/workflows/deploy.yml/badge.svg)](https://github.com/mjulestek/my-cloudpath-portfolio/actions/workflows/deploy.yml)
 
 **Stack:** Git · GitHub · GitHub Actions · Terraform · S3 · CloudFront · ACM
+
+## Architecture
+
+![Architecture diagram: developer pushes to GitHub, triggering an infra workflow and a deploy workflow, both authenticating to AWS via OIDC; the infra workflow manages IAM, S3 state and site buckets, and CloudFront with ACM; Namecheap DNS points to CloudFront; visitors reach the site over HTTPS](docs/images/architecture.jpg)
 
 ## How it works
 
