@@ -64,9 +64,9 @@ jobs:
           cat > terraform.tfvars << EOF
           aws_region                = "${{ vars.AWS_REGION }}"
           site_bucket_name          = "${{ vars.SITE_BUCKET }}"
-          domain_name                = "${{ vars.SITE_DOMAIN }}"
-          subject_alternative_names  = ${{ vars.TF_SUBJECT_ALTERNATIVE_NAMES }}
-          acm_certificate_arn        = "${{ vars.TF_ACM_CERTIFICATE_ARN }}"
+          domain_name               = "${{ vars.SITE_DOMAIN }}"
+          subject_alternative_names = ${{ vars.TF_SUBJECT_ALTERNATIVE_NAMES }}
+          acm_certificate_arn       = "${{ vars.TF_ACM_CERTIFICATE_ARN }}"
           EOF
           echo "--- Generated backend-prod.hcl ---"
           cat backend-prod.hcl
@@ -122,16 +122,17 @@ jobs:
           cat > terraform.tfvars << EOF
           aws_region                = "${{ vars.AWS_REGION }}"
           site_bucket_name          = "${{ vars.SITE_BUCKET }}"
-          domain_name                = "${{ vars.SITE_DOMAIN }}"
-          subject_alternative_names  = ${{ vars.TF_SUBJECT_ALTERNATIVE_NAMES }}
-          acm_certificate_arn        = "${{ vars.TF_ACM_CERTIFICATE_ARN }}"
+          domain_name               = "${{ vars.SITE_DOMAIN }}"
+          subject_alternative_names = ${{ vars.TF_SUBJECT_ALTERNATIVE_NAMES }}
+          acm_certificate_arn       = "${{ vars.TF_ACM_CERTIFICATE_ARN }}"
           EOF
           echo "--- Generated backend-prod.hcl ---"
           cat backend-prod.hcl
           echo "--- Generated terraform.tfvars ---"
           cat terraform.tfvars
 
-     
+      # Re-running init is required — this is a fresh runner with no state
+      # from the plan job. The downloaded tfplan file guarantees apply runs
       # against exactly what was reviewed, not a freshly recomputed plan.
       - run: terraform init -backend-config=backend-prod.hcl
 
@@ -167,9 +168,9 @@ jobs:
           cat > terraform.tfvars << EOF
           aws_region                = "${{ vars.AWS_REGION }}"
           site_bucket_name          = "${{ vars.SITE_BUCKET }}"
-          domain_name                = "${{ vars.SITE_DOMAIN }}"
-          subject_alternative_names  = ${{ vars.TF_SUBJECT_ALTERNATIVE_NAMES }}
-          acm_certificate_arn        = "${{ vars.TF_ACM_CERTIFICATE_ARN }}"
+          domain_name               = "${{ vars.SITE_DOMAIN }}"
+          subject_alternative_names = ${{ vars.TF_SUBJECT_ALTERNATIVE_NAMES }}
+          acm_certificate_arn       = "${{ vars.TF_ACM_CERTIFICATE_ARN }}"
           EOF
           echo "--- Generated backend-prod.hcl ---"
           cat backend-prod.hcl

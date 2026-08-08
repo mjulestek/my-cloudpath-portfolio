@@ -25,7 +25,7 @@ resource "aws_s3_bucket" "site" {
   bucket = var.site_bucket_name
 
   # Safe here specifically because this bucket's contents are a DERIVED
-  # output (deployed by Jenkins from public/ in Git), not a source of truth.
+  # output (deployed by GitHub Actions / scripts/deploy-content.sh from public/ in Git), not a source of truth.
   # Without this, `terraform destroy` fails outright on a non-empty bucket
   # (or one with old object versions still present, even if it looks empty
   # in the console) — deliberately NOT set on the state bucket in
@@ -99,11 +99,11 @@ resource "aws_cloudfront_distribution" "site" {
   }
 
   default_cache_behavior {
-    allowed_methods         = ["GET", "HEAD", "OPTIONS"]
-    cached_methods           = ["GET", "HEAD"]
-    target_origin_id         = "s3-origin"
-    viewer_protocol_policy   = "redirect-to-https"
-    compress                 = true
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD"]
+    target_origin_id       = "s3-origin"
+    viewer_protocol_policy = "redirect-to-https"
+    compress               = true
 
     # AWS managed cache policy: "CachingOptimized"
     cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6"
