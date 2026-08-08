@@ -5,8 +5,7 @@
 
 This document is organized in two parts:
 
-- **Part I — Infrastructure Provisioning.** Done once per environment. Produces a live site, with real content, reachable over HTTPS. Owned by whoever manages AWS resources.
-- **Part II — Deployment & CI/CD.** Done once to set up, then used continuously. Produces the automated pipeline that ships content and infra changes going forward. Owned by whoever ships changes day to day.
+
 
 Every step states **why** in 1–2 sentences, then **exactly what to do** — which button, which field, which command. Nothing is assumed to be "obvious."
 

@@ -58,7 +58,7 @@ jobs:
         run: |
           cat > backend-prod.hcl << EOF
           bucket       = "${{ vars.TF_STATE_BUCKET }}"
-          region       = "${{ vars.AWS_REGION }}"
+          region       = "${{ vars.TF_STATE_REGION }}"
           use_lockfile = true
           EOF
           cat > terraform.tfvars << EOF
@@ -116,7 +116,7 @@ jobs:
         run: |
           cat > backend-prod.hcl << EOF
           bucket       = "${{ vars.TF_STATE_BUCKET }}"
-          region       = "${{ vars.AWS_REGION }}"
+          region       = "${{ vars.TF_STATE_REGION }}"
           use_lockfile = true
           EOF
           cat > terraform.tfvars << EOF
@@ -131,8 +131,7 @@ jobs:
           echo "--- Generated terraform.tfvars ---"
           cat terraform.tfvars
 
-      # Re-running init is required — this is a fresh runner with no state
-      # from the plan job. The downloaded tfplan file guarantees apply runs
+     
       # against exactly what was reviewed, not a freshly recomputed plan.
       - run: terraform init -backend-config=backend-prod.hcl
 
@@ -162,7 +161,7 @@ jobs:
         run: |
           cat > backend-prod.hcl << EOF
           bucket       = "${{ vars.TF_STATE_BUCKET }}"
-          region       = "${{ vars.AWS_REGION }}"
+          region       = "${{ vars.TF_STATE_REGION }}"
           use_lockfile = true
           EOF
           cat > terraform.tfvars << EOF
