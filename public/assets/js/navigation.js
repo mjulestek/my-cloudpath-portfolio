@@ -102,7 +102,9 @@
         </div>
         <div class="footer-bottom">
           <span>Built with HTML, CSS &amp; vanilla JS &mdash; zero frameworks, zero build step.</span>
-          <div class="status-strip"><span class="dot"></span><strong>Deployed via Terraform + GitHub Actions</strong></div>
+          <a href="https://github.com/mjulestek/my-cloudpath-portfolio/actions/workflows/deploy.yml" target="_blank" rel="noopener" style="display:flex;align-items:center;">
+            <img src="https://github.com/mjulestek/my-cloudpath-portfolio/actions/workflows/deploy.yml/badge.svg" alt="Deploy workflow status" height="20">
+          </a>
         </div>
       </div>
     </footer>

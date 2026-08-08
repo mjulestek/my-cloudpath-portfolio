@@ -240,8 +240,13 @@ const PROJECTS = [
 /* ---- Deterministic topology art per project (signature visual motif) ----
    Always renders on a dark "blueprint" panel regardless of site theme —
    same intentional choice as the terminal staying dark in light mode,
-   reinforcing the schematic/engineering-drawing motif. */
+   reinforcing the schematic/engineering-drawing motif. One project has
+   a real architecture diagram instead of generated art — used as-is
+   rather than replaced with a synthetic substitute. */
 function projectArt(project, seedIndex) {
+  if (project.id === 'aws-portfolio-deployment') {
+    return `<img src="assets/images/projects/aws-portfolio-architecture.jpg" alt="Architecture diagram for this deployment" style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">`;
+  }
   const palette = ['#D4954B', '#64707C', '#B87D42'];
   const color = palette[seedIndex % palette.length];
   let seed = 0;
@@ -361,7 +366,7 @@ function renderProjectDetails() {
   document.getElementById('breadcrumbCurrent').textContent = project.title;
 
   wrap.innerHTML = `
-    <div class="page-hero container band-soft" style="border-radius:0 0 32px 32px;">
+    <div class="page-hero container band-soft" style="border-radius:0 0 8px 8px;">
       <div class="dot-cluster" style="top:20px; right:6%;"></div>
       <div class="breadcrumbs" id="breadcrumbNav">
         <a href="/">Home</a>
@@ -373,9 +378,10 @@ function renderProjectDetails() {
       <div class="badge accent" style="margin-bottom:16px;">${project.provider}</div>
       <h1 class="reveal in-view" style="max-width:820px;">${project.title}</h1>
       <p style="max-width:640px;font-size:1.05rem;margin-top:16px;">${project.summary}</p>
-      <div class="hero-actions" style="margin-top:28px;">
+      <div class="hero-actions" style="margin-top:28px;align-items:center;">
         <a href="${project.github}" target="_blank" rel="noopener" class="btn btn-primary">View source on GitHub</a>
         <a href="projects.html" class="btn btn-secondary">Back to all projects</a>
+        ${project.id === 'aws-portfolio-deployment' ? '<a href="https://github.com/mjulestek/my-cloudpath-portfolio/actions/workflows/deploy.yml" target="_blank" rel="noopener"><img src="https://github.com/mjulestek/my-cloudpath-portfolio/actions/workflows/deploy.yml/badge.svg" alt="Deploy workflow status" height="28"></a>' : ''}
       </div>
       <div class="project-tags" style="margin-top:24px;">
         ${project.tags.map(t => `<span class="badge">${t}</span>`).join('')}
@@ -406,6 +412,7 @@ function renderProjectDetails() {
         <div class="tab-panel" data-panel="architecture">
           <h3>Cloud architecture</h3>
           <p style="margin:14px 0;max-width:760px;">${project.architecture}</p>
+          ${project.id === 'aws-portfolio-deployment' ? '<img src="assets/images/projects/aws-portfolio-architecture.jpg" alt="Architecture diagram: developer pushes to GitHub, triggering an infra workflow and a deploy workflow, both authenticating to AWS via OIDC; the infra workflow manages IAM, S3 state and site buckets, and CloudFront with ACM; Namecheap DNS points to CloudFront; visitors reach the site over HTTPS" style="max-width:520px;width:100%;display:block;margin-top:20px;border-radius:var(--radius-lg);border:1px solid var(--border);">' : ''}
         </div>
         <div class="tab-panel" data-panel="pipeline">
           <h3>CI/CD pipeline</h3>
